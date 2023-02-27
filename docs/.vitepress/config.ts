@@ -5,7 +5,7 @@ const config = {
   title: "叮咚澈的快乐学习时光",
   description: " ",
   lastUpdated: true,
-  base: "/article",
+  base: "/documents/",
   // lang: 'zh-CN',
   head: [["link", { rel: "icon", type: "image/png", href: "pure-logo.svg" }]],
   themeConfig: {
