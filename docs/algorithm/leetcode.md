@@ -1314,7 +1314,7 @@ var lowestCommonAncestor = function(root, p, q) {
 
 * 优化的点：剪枝，i <= n - (k - path.length) + 1
 
-* <img src=".\img\组合回溯.PNG" style="zoom:50%;" />
+* <img src=".\img\组合回溯.jpg" style="zoom:50%;" />
 
 * ```javascript
   var combine = function(n, k) {
@@ -1398,7 +1398,7 @@ var combinationSum2 = function(candidates, target) {
 
 * 关于模拟切割线，其实就是index是上一层已经确定了的分割线，i是这一层试图寻找的新分割线
 
-* <img src="D:\graduate_term\notes\leetcode\img\分割回文串.PNG" style="zoom:67%;" />
+* <img src=".\img\分割回文串.jpg" style="zoom:67%;" />
 
 * startIndex即是切割的位置，回溯递推终止条件就是，startIndex到末尾
 
@@ -1713,7 +1713,7 @@ var permuteUnique = function(nums) {
 
 ## 0-1背包理论
 
-* <img src="D:\graduate_term\notes\leetcode\img\背包问题分类.PNG" style="zoom:80%;" />
+* <img src=".\img\背包问题分类.jpg" style="zoom:80%;" />
 * 有物品0，1，2....，每个物品的重量weight[i]，每个物品的价值为value[i]。背包的承重为j，求在背包承重范围内，所能得到的最大价值
 * 01背包一定是外层for循环遍历物品，内层for循环遍历背包容量**且从后向前遍历**！
 
@@ -2739,7 +2739,7 @@ var minDistance = function(word1, word2) {
    };
    ```
 
-   <img src="D:\graduate_term\notes\leetcode\img\_动态规划思维导图_青.png" style="zoom: 200%;" />
+   <img src=".\img\_动态规划思维导图_青.jpg" style="zoom: 200%;" />
 
 # 贪心算法
 
@@ -3215,7 +3215,7 @@ var minCameraCover = function(root) {
    蓝色：#0000ff 等价于 rgb(0, 0, 255)
    请实现一个函数，如果传入的是 HEX 颜色格式，返回 RGB 格式。如果是 RGB 颜色格式，返回 HEX 颜色格式。如果入参非法（表示颜色无法在 CSS 中使用），则扔出异常。
 
-   ![image-20230215215822023](D:\graduate_term\notes\leetcode\img\面题01)
+   <img src=".\img\面题01.jpg" style="zoom:50%;" />
 
 2. 对一个给定的时间字符串（格式为 "hh:mm"），时针和分针所成的角度是确定的，比如 "03:00" 为 90 度，"06:00" 为 180 度。
 
@@ -3292,8 +3292,7 @@ function reverseBetween( head ,  m ,  n ) {
     curNode = rightNode.next;
 
     preNode.next = null;    //切断链表
-    rightNode.next = null;
-
+    rightNode.next = nu
     let myreverse = function(node) {//反转链表区间
         let pre = null;
         let cur = node;
