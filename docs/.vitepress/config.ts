@@ -3,7 +3,7 @@
  */
 const config = {
   title: "叮咚澈的快乐学习时光",
-  description: "",
+  description: " ",
   lastUpdated: true,
   base: "/article",
   // lang: 'zh-CN',
