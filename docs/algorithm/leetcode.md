@@ -1,17 +1,18 @@
 # 刷题资料
 
-1. 代码随想录：网站（programmercarl.com）pdf、公众号
+1. 代码随想录：pdf、公众号
 2. 剑指offer
 3. hot100
 
 # JS知识点
 
 ## 1. **JS除法“/”**
+
 * 返回的是小数，不会取整。取整的方法：
 
-   * Math.round()：四舍五入
-   * Math.floor()：向下取整
-   * Math.ceil()：向上取整
+  * Math.round()：四舍五入
+  * Math.floor()：向下取整
+  * Math.ceil()：向上取整
 
 ## 2. j**s数组排序**：
 
@@ -23,15 +24,16 @@ nums.sort((a, b) => a - b)	// a小于b的话，返回负值；a大于b的话，�
 ```
 
 ## 3. **js创建二维数组**：
+
 * 使用Array.from()函数（from函数是ES6新增的创建数组的静态方法）。from函数用于将类数组结构转换为数组结构。from函数可以接收第二个参数，用于增强新数组的值，（新数组中的每一个值都会执行该回调函数）
 
-   ```javascript
-   let nums = Array.from(new Array(3), () => new Array(3));
-   let nums = new Array().fill().map(() => new Array())//注意这里用了fill(),参数为空填充的是undefined
-   let nums = []
-   ```
-   
-   * 当一个对象被传递给 `fill` 方法的时候，填充数组的是这个对象的引用。
+  ```javascript
+  let nums = Array.from(new Array(3), () => new Array(3));
+  let nums = new Array().fill().map(() => new Array())//注意这里用了fill(),参数为空填充的是undefined
+  let nums = []
+  ```
+
+  * 当一个对象被传递给 `fill` 方法的时候，填充数组的是这个对象的引用。
 
 
 3. string类型不可变
@@ -111,7 +113,7 @@ queue.splice(index, 0, people[i])
 1. **有序数组的两数和：**在有序数组中找出两个数，使它们的和为target。
 
    > 使用双指针，一个指针指向值较小的元素，一个指针指向值较大的元素。指向较小元素的指针从头向尾遍历，指向较大元素的指针从尾向头遍历。
-   
+
 2. **两数平方和**：判断一个非负整数是否为两个整数的平方和。
 
    >双指针，左指针从0开始，右指针从target的根号开始，应用sqrt函数开根号。sum=left*left+right+right。分三种情况：
@@ -179,9 +181,11 @@ queue.splice(index, 0, people[i])
 #### 2. 移除元素
 
 * 移除数组中的指定元素，需考虑数组中删除元素只能覆盖
+
 * **例题：** 27. 移除元素
+
   * 方法：采用快慢指针的方法，慢指针指向新数组的元素，快指针用于筛选新数组
-  
+
   ```javascript
   /**
    * 双指针，low指针指向结果数组，fast指针指向nums数组
@@ -202,11 +206,12 @@ queue.splice(index, 0, people[i])
       return low;
   };
   ```
+
 * **例题：**977. 有序数组的平方
-  
+
   * 方法：考虑到数组的有序，以0为分割点，分为两段采用**归并排序**的方法
   * 也可使用双指针法
-  
+
   ```javascript
   /**
    * 目的是找到平方之后的顺序，需要注意的是，数组正数和负数都是有序的
@@ -233,7 +238,7 @@ queue.splice(index, 0, people[i])
       return result;
   };
   ```
-  
+
   
 
 #### 3. 长度最小的子数组209
@@ -325,7 +330,7 @@ queue.splice(index, 0, people[i])
       return result;
   };
   ```
-  
+
 * 
 
   ```javascript
@@ -680,9 +685,9 @@ var reverse = function(str, left, right) {
 ### 2. 左旋转字符串
 
 * 考虑o(1)的空间复杂度，
-   	1. 先翻转前部分字符串
-   	2. 再翻转后部分字符串
-   	3. 最后整体翻转字符串
+  	1. 先翻转前部分字符串
+  	2. 再翻转后部分字符串
+  	3. 最后整体翻转字符串
 
 ```javascript
 var reverseLeftWords = function(s, n) {
@@ -812,7 +817,7 @@ var reverseWord = function(str, start, end) {	//翻转字符串
   * push：加入堆末尾，不断比较children和parent，不断上移，满足parent小于左右孩子
   * pop：删除堆顶元素，把堆末尾元素放在堆顶，不断下沉，维护堆的结构
 * js中没有堆结构，需自己构建堆。有一个queue数组，以及compareFn比较函数
-* 注意：本题中堆内存放的是长度为2的数组，索引为0的位置，存放key，索引为1的位置存放value（出现次数）。所以比较函数，比较的是a[1] - b[1](索引为1) （索引为1）
+* 注意：本题中堆内存放的是长度为2的数组，索引为0的位置，存放key，索引为1的位置存放value（出现次数）。所以比较函数，比较的是`a[1] - b[1] （索引为1）`
 * 堆就是一颗完全二叉树，保证父子节点的顺序关系
 
 ### 总结
@@ -830,7 +835,7 @@ var reverseWord = function(str, start, end) {	//翻转字符串
 ### 1. 前中后序遍历
 
 * 二叉树常用递归来解决，
-*  递归写法：
+* 递归写法：
   1. 确定递归函数的参数和返回值
   2. 确定递归的终止条件
   3. 确定单层递归逻辑
@@ -1041,8 +1046,11 @@ var isValidBST = function(root) {
 * 不使用额外的空间，中序遍历二叉树，记录每个数出现的次数，
 
  * 如果curCount大于maxCount，更新maxCount，并把结果数组置空
+
  * 如果curCount==maxCount, 将当前值加入结果数组中
+
  * 如果curCount < maxCount，不用理会
+
  * （但是自己的写法仍然用到多余的空间，valueList）
 
 * ```javascript
@@ -1089,6 +1097,7 @@ var isValidBST = function(root) {
 ### 6. 最近公共祖先
 
 思路：找两个节点的最近的公共祖先，考虑找出每个节点的祖先，然后比较最后一个相等的节点即为最近公共祖先（需要找出每个节点的路径）
+
 * 递归的过程中，**需要回溯**
 
 * 怎样回溯：**递归左子树/右子树，需得到递归返回结果，**
@@ -1308,13 +1317,14 @@ var lowestCommonAncestor = function(root, p, q) {
 * 找到范围 `[1, n]` 中所有可能的 `k` 个数的组合。
 
 * 回溯法
-   * 确定终止条件，当path中的长度达到k时，不再递归
-   * for循环，需要设置startIndex，防止结果有重复项比如12和21
-   * 递归，和for循环竟然一样，借助startIndex即可
+
+  * 确定终止条件，当path中的长度达到k时，不再递归
+  * for循环，需要设置startIndex，防止结果有重复项比如12和21
+  * 递归，和for循环竟然一样，借助startIndex即可
 
 * 优化的点：剪枝，i <= n - (k - path.length) + 1
 
-* <img src=".\img\组合回溯.jpg" style="zoom:50%;" />
+* <img src="./img/组合回溯.jpg" style="zoom:50%;" />
 
 * ```javascript
   var combine = function(n, k) {
@@ -1398,7 +1408,7 @@ var combinationSum2 = function(candidates, target) {
 
 * 关于模拟切割线，其实就是index是上一层已经确定了的分割线，i是这一层试图寻找的新分割线
 
-* <img src=".\img\分割回文串.jpg" style="zoom:67%;" />
+* <img src="./img/分割回文串.jpg" style="zoom:67%;" />
 
 * startIndex即是切割的位置，回溯递推终止条件就是，startIndex到末尾
 
@@ -1438,12 +1448,12 @@ var combinationSum2 = function(candidates, target) {
 ## 5. 复原IP地址
 
 * 把字符串切割为ip地址。就是对字符串进行分割
-   * 终止条件：当path.length ==4
-     * index!= s.length的时候，终止，
-     * index == s.length 得到答案
-   * 横向for循环，startIndex切割字符串，注意切割长度不大于3，所以有i <= startIndex + 2
-   * 竖向递归深度： backTracing(i+1),从上个切割点的后面开始，
-   * 切割字符串索引：s.substring(startIndex, i + 1)
+  * 终止条件：当path.length ==4
+    * index!= s.length的时候，终止，
+    * index == s.length 得到答案
+  * 横向for循环，startIndex切割字符串，注意切割长度不大于3，所以有i <= startIndex + 2
+  * 竖向递归深度： backTracing(i+1),从上个切割点的后面开始，
+  * 切割字符串索引：s.substring(startIndex, i + 1)
 
 ```javascript
 var restoreIpAddresses = function(s) {
@@ -1476,7 +1486,9 @@ var restoreIpAddresses = function(s) {
 ## 6. 求子集个数
 
 * 1类题：数组不包含重复元素，求子集个数（典型回溯法，画树形图，就很好理解写代码，都是模板。注意点每扩展一个节点都要加入path)
+
 * 2类题：数组中包含重复元素，求子集个数。（数组去重，先对数组进行排序，使用used数组，分为树枝去重和树层去重。也可以不适用used数组，直接判断同层是否有相邻的相等元素即可。见代码随想录）(对比递增子序列的去重)
+
 * ```javascript
   /**
    * 有重复元素，树的同层不能重复取，但是树枝可以重复取
@@ -1508,6 +1520,7 @@ var restoreIpAddresses = function(s) {
       return result;
   };
   ```
+
 * 
 
 ## 7.递增子序列
@@ -1520,11 +1533,11 @@ var restoreIpAddresses = function(s) {
     1. map：key为`nums[i]`,`value`为`i`索引。这样就可以判断是否已经出现`nums[i]`。
        * map.get()、map.has()函数
     2. set：set中不能有重复元素。set.insert()
-  	    * const uset = new Set();
-  	     * uset.add()、uset.has()、uset.delete()、uset.clear()
+       * const uset = new Set();
+        * uset.add()、uset.has()、uset.delete()、uset.clear()
     3. 数组：因为数组也是一种哈希表，题目中nums[i]在-100到100之间，可以将其映射到0到200之间
-        * let uarr = new Array();
-        * uarr[nums[i] + 100] = true;
+       * let uarr = new Array();
+       * uarr[nums[i] + 100] = true;
 * 注意点：同层的标志，uset在哪里重新定义，在哪里赋值
 
 ```javascript
@@ -1713,7 +1726,7 @@ var permuteUnique = function(nums) {
 
 ## 0-1背包理论
 
-* <img src=".\img\背包问题分类.jpg" style="zoom:80%;" />
+* <img src="./img/背包问题分类.jpg" style="zoom:80%;" />
 * 有物品0，1，2....，每个物品的重量weight[i]，每个物品的价值为value[i]。背包的承重为j，求在背包承重范围内，所能得到的最大价值
 * 01背包一定是外层for循环遍历物品，内层for循环遍历背包容量**且从后向前遍历**！
 
@@ -1845,11 +1858,11 @@ var lastStoneWeightII = function(stones) {
   * 问题转换为求几个数的组合，使其和为x，这种组合有多少种
  * **解法一：**回溯法，找到每一种组合，并计数。暴力解法
  * **解法二：**动态规划，
-     1. `dp[j]` 表示和为j时，组合的总数
-     2. 如果有一个`nums[i]`，那么`dp[j-nums[i]]`代表和为`j-nums[i]`的组合数。
-         * 那么`dp[j] = dp[j-nums[i]]`,所以循环`i`
-     3. dp[0] = 1,如果数组[0] ，target = 0，那么 bagSize = (target + sum) / 2 = 0。 dp[0]也应该是1
-     4. 遍历顺序，内层`j`从`x`到`nums[i]`,倒叙遍历,升序遍历,外层`i`从`0`到`nums.length`
+   1. `dp[j]` 表示和为j时，组合的总数
+   2. 如果有一个`nums[i]`，那么`dp[j-nums[i]]`代表和为`j-nums[i]`的组合数。
+      * 那么`dp[j] = dp[j-nums[i]]`,所以循环`i`
+   3. dp[0] = 1,如果数组[0] ，target = 0，那么 bagSize = (target + sum) / 2 = 0。 dp[0]也应该是1
+   4. 遍历顺序，内层`j`从`x`到`nums[i]`,倒叙遍历,升序遍历,外层`i`从`0`到`nums.length`
  * **注意点：**当target> sum 时，无解，返回0
  * 当（sum + target）%2 为1的时候，无解，返回0
 
@@ -1919,12 +1932,12 @@ var findMaxForm = function(strs, m, n) {
 
 * 01背包一定是外层for循环遍历物品，内层for循环遍历背包容量且从后向前遍历！
 
-- 纯 0 - 1 背包 (opens new window)是求 给定背包容量 装满背包 的最大价值是多少。
-- [416. 分割等和子集 (opens new window)](https://programmercarl.com/0416.分割等和子集.html)是求 给定背包容量，能不能装满这个背包。
+- 纯 0 - 1 背包 是求 给定背包容量 装满背包 的最大价值是多少。
+- 416.分割等和子集 是求 给定背包容量，能不能装满这个背包。
   * `dp[j] = max(dp[j], dp[j-nums[i]] + nums[i])`
-- [1049. 最后一块石头的重量 II (opens new window)](https://programmercarl.com/1049.最后一块石头的重量II.html)是求 给定背包容量，尽可能装，最多能装多少
+- 1049 最后一块石头的重量 II 是求 给定背包容量，尽可能装，最多能装多少
   - `dp[j] = Math.max(dp[j], dp[j-stones[i]] + stones[i])`;
-- [494. 目标和 (opens new window)](https://programmercarl.com/0494.目标和.html)是求 给定背包容量，装满背包有多少种方法。
+- 494 目标和 是求 给定背包容量，装满背包有多少种方法。
   - `dp[j] += dp[j-nums[i]]`
 - 1和零是求 给定背包容量，装满背包最多有多少个物品。
   - `dp[i][j] = max(dp[i-zero[y]][j-one[y]] + 1, dp[i][j])`
@@ -2303,6 +2316,7 @@ var maxProfit = function(prices) {
     return dp[prices.length][1];
 };
 ```
+
 ## 18.买卖股票时机-含手续费
 
 ```javascript
@@ -2627,9 +2641,9 @@ var minDistance = function(word1, word2) {
 * 子数组的dp数组一般表示以`i`结尾
 * 注意点：
   * 子序列问题，`dp[i][j]`表示的`i-1`和`j-1`位置是否相同。所以`i`和`j`是从1开始遍历的
-     * `dp[i][j]表示从0到i的数组A 和从0到j的数组b的子序列长度（注意重点，不要求结尾字符）`
-     * `若A[i] == B[j]， 则dp[i][j] = dp[i-1][j-1] + 1。`
-     * `若A[i] != B[j], 则max(dp[i-1][j], dp[i[j-1]])`
+    * `dp[i][j]表示从0到i的数组A 和从0到j的数组b的子序列长度（注意重点，不要求结尾字符）`
+    * `若A[i] == B[j]， 则dp[i][j] = dp[i-1][j-1] + 1。`
+    * `若A[i] != B[j], 则max(dp[i-1][j], dp[i[j-1]])`
 
 
 
@@ -2640,10 +2654,10 @@ var minDistance = function(word1, word2) {
 * 动态规划：dp数组，`dp[i][j]`:表示区间`i`到`j`是否为回文子串(左闭右闭区间)
 
   * 递推公式：
-     *  判断s[i]是否等于s[j]。如果相等：
-        *  若i == j, 则是回文子串
-        *  若i + 1 == j, 则是回文子串
-        *  若i + 1 < j，则判断dp[i][j]是否为回文子串，等于判断dp[i + 1] [j - 1]是否为回文子串
+    *  判断s[i]是否等于s[j]。如果相等：
+       *  若i == j, 则是回文子串
+       *  若i + 1 == j, 则是回文子串
+       *  若i + 1 < j，则判断dp[i][j]是否为回文子串，等于判断dp[i + 1] [j - 1]是否为回文子串
   * 注意点：需要从下往上，从左往右计算，
 
 * 中心扩散：找中心，往两边扩散判断是否对称
@@ -2739,7 +2753,7 @@ var minDistance = function(word1, word2) {
    };
    ```
 
-   <img src=".\img\_动态规划思维导图_青.jpg" style="zoom: 200%;" />
+   <img src="./img/_动态规划思维导图_青.jpg" style="zoom: 200%;" />
 
 # 贪心算法
 
@@ -3215,7 +3229,7 @@ var minCameraCover = function(root) {
    蓝色：#0000ff 等价于 rgb(0, 0, 255)
    请实现一个函数，如果传入的是 HEX 颜色格式，返回 RGB 格式。如果是 RGB 颜色格式，返回 HEX 颜色格式。如果入参非法（表示颜色无法在 CSS 中使用），则扔出异常。
 
-   <img src=".\img\面题01.jpg" style="zoom:50%;" />
+   <img src="./img/面题01.jpg" style="zoom:50%;" />
 
 2. 对一个给定的时间字符串（格式为 "hh:mm"），时针和分针所成的角度是确定的，比如 "03:00" 为 90 度，"06:00" 为 180 度。
 
@@ -3345,40 +3359,42 @@ function reverseBetween( head ,  m ,  n ) {
      ```
 
    * 注意点：使用标准模板库的sort函数对向量容器进行排序
-   
+
      ```js
      sort(nums.begin(),nums.end());
      ```
-   
+
 2. **最大子数组和**：给出一个整数数组，找出一个具有最大和的连续子数组，返回其最大和（子数组最少包含一个元素）（Maximum Subarray）
 
    * 题解：动态规划的方法，用$f(i)$代表以第$i$个数结尾的连续子数组的最大和，只需要求出每个位置的$f(i)$，然后返回$f$数组中的最大值。
-   
+
    * $$
      max_{0<=i<n}f(i)
      $$
-   
+
    * 每一个$f(i)$由$f(i-1)$得出
-   
+
    * $$
      f(i)=max(f(i-1)+nums[i],nums[i])
      $$
+
      代码如下：
+
     ```js
-    class Solution {
-    public:
-        int maxSubArray(vector<int>& nums) {
-            int pre=nums[0];
-            int maxRes=nums[0];
-            for(int i=1;i<nums.size();i++){
-                pre= max(nums[i]+pre,nums[i]);
-               maxRes=max(pre,maxRes);
-            }
-            return maxRes;
-        }
-    };
+   class Solution {
+   public:
+       int maxSubArray(vector<int>& nums) {
+           int pre=nums[0];
+           int maxRes=nums[0];
+           for(int i=1;i<nums.size();i++){
+               pre= max(nums[i]+pre,nums[i]);
+              maxRes=max(pre,maxRes);
+           }
+           return maxRes;
+       }
+   };
     ```
-   
+
 3. **两数之和**：给定一个数组和一个target,返回两个数相加等于target的位置索引
 
    * 题解一：两遍循环，时间复杂度$o(n^2)$，空间复杂度$o(1)$
@@ -3519,7 +3535,7 @@ function reverseBetween( head ,  m ,  n ) {
        }
    };
    ```
-   
+
 8. **杨辉三角**：给出杨辉三角的行数，给出杨辉三角每一行的值
 
    * 题解：杨辉三角是一个对称的结构，每一行两边值是1
