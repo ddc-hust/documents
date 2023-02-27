@@ -1,4 +1,4 @@
-name: Deploy
+name: build to my github
 
 on:
   push:
@@ -9,21 +9,31 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: yarn
-      - run: yarn install --frozen-lockfile
-
+      - run: yarn install
       - name: Build
         run: yarn build
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      # # - name: CreateTag
+      # #   run git tag -a
+      # - name: Deploy
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     github_token: ${{ secrets.ACTION_SECRET }}
+      #     deploy_key: ${{ secrets.ACTION_SECRET }}
+      #     publish_dir: docs/.vitepress/dist
+
+      - name: Deploy 
+        uses: crazy-max/ghaction-github-pages@v2
+        # 环境变量
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_SECRET }}
         with:
-          github_token: ${{ secrets.ACTION_SECERT }}
-          publish_dir: docs/.vitepress/dist
-          # cname: example.com # if wanna deploy to custom domai
+          # 部署到 gh-pages 分支
+          target_branch: main
+          # 部署目录为 VuePress 的默认输出目录
+          build_dir: docs/.vuepress/dist
+
