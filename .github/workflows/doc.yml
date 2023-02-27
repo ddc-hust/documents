@@ -1,4 +1,4 @@
-name: build to my github
+name: Deploy
 
 on:
   push:
@@ -9,19 +9,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: yarn install
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+
       - name: Build
         run: yarn build
 
-      # - name: CreateTag
-      #   run git tag -a
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.ACTION_SECRET }}
-          deploy_key: ${{ secrets.ACTION_SECRET }}
+          github_token: ${{ secrets.ACTION_SECERT }}
           publish_dir: docs/.vitepress/dist
+          # cname: example.com # if wanna deploy to custom domain
