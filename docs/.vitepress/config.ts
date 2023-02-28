@@ -38,6 +38,7 @@ const config = {
       },
     ],
     sidebar: {
+      displayAllHeaders: true,
       sidebarDepth: 2,
       "/frontend/": [
         {
