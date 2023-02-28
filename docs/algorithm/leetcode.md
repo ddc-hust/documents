@@ -1,6 +1,7 @@
 ---
 sidebarDepth: 2
 title: "hh"
+displayAllHeaders: true
 ---
 
 ## JS知识点  

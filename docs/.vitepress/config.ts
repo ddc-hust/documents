@@ -102,6 +102,7 @@ const config = {
           items: [
             {
               sidebarDepth: 2,
+              displayAllHeaders: true,
               text: "LeetCode",
               link: "/algorithm/leetcode"
             },
