@@ -1,8 +1,8 @@
 {
-  "name": "vitepress-site",
+  "name": "ddc-notes",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "chenjunyi <629162344@qq.com>",
+  "author": "zhangjie <1966423145@qq.com>",
   "license": "MIT",
   "scripts": {
     "cz": "git add . && git-cz && git push",
