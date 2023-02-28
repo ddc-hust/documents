@@ -3251,6 +3251,58 @@ var minCameraCover = function(root) {
    }
    ```
 
+# 排序
+
+## 1. 快速排序
+
+* 快速排序，选择一个分割点，使得左边的元素均小于分割点的元素，右边的元素均大于分割点的元素。再使用递归函数对分割点两边的序列重新排序
+
+```js
+/**
+  * 快速排序：设置分割点，左指针不断移动，直到当前值比分割点大。
+  * 右指针不断移动，直到当前值比分割点小
+  * 交换左右指针的值，并且left++, right--
+  * 直到left>right时，交换分割点和right的值
+  * 开启下一次分割
+  */
+var sortArray = function(nums) {
+
+    let quickSort = (left, right) => {
+        if(left > right) return;//left大于right的时候return
+        let tempLeft = left;
+        let tempRight = right;
+        let mid = left; //分割点选择left
+        while(left <= right) {//注意left是小于等于right。等于的时候也要判断
+            while(left <= right && nums[left] <= nums[mid]) {
+                left++;
+            }
+            while(left <= right && nums[right] > nums[mid]) {
+                right--;
+            }
+            if(left <= right) {
+                let temp = nums[right];
+                nums[right] = nums[left];
+                nums[left] = temp;
+                left++;
+                right--;
+            }
+        }
+        let temp = nums[right];
+        nums[right] = nums[mid];
+        nums[mid] = temp;
+        quickSort(tempLeft, right-1);
+        quickSort(right+1, tempRight);
+    }
+
+    quickSort(0, nums.length-1);
+    return nums;
+    
+};
+```
+
+
+
+
 
 # 扩展
 
