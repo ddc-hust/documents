@@ -1,8 +1,9 @@
 ---
 sidebarDepth: 2
+title: "hh"
 ---
 
-## JS知识点 
+## JS知识点  
 
 ### 1. **JS除法“/”**
 
