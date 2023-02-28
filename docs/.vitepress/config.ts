@@ -102,6 +102,7 @@ const config = {
           items: [
             {
               text: "LeetCode",
+              sidebarDepth: 2,
               link: "/algorithm/leetcode",
             },
             {
@@ -121,7 +122,7 @@ const config = {
         },
       ],
     },
-    socialLinks: [{ icon: "github", link: "" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/ddc-hust/documents" }],
   },
   slide: {
     "/frontend/": [
