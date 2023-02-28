@@ -41,7 +41,7 @@ const config = {
         {
           isGroup: true,
 
-         
+          sidebarDepth: 3,
           items: [
             {
               text: "javascript",
