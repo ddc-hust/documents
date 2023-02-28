@@ -9,7 +9,7 @@ const config = {
   // lang: 'zh-CN',,
   head: [["link", { rel: "icon", type: "image/png", href: "pure-logo.svg" }]],
   themeConfig: {
-    sidebarDepth: 0,
+    sidebarDepth: 2,
     logo: "/pure-logo.svg",
     nav: [
       { text: "首页", link: "/" },
@@ -38,12 +38,13 @@ const config = {
       },
     ],
     sidebar: {
-     
+      sidebarDepth: 2,
       "/frontend/": [
         {
           isGroup: true,
           items: [
             {
+
               text: "javascript",
               link: "/frontend/javascript",
             },
@@ -94,9 +95,11 @@ const config = {
       ],
       "/algorithm/": [
         {
+          sidebarDepth: 2,
           isGroup: true,
           items: [
             {
+              sidebarDepth: 2,
               text: "LeetCode",
               link: "/algorithm/leetcode",
             },
