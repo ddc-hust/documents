@@ -9,7 +9,7 @@ const config = {
   // lang: 'zh-CN',,
   head: [["link", { rel: "icon", type: "image/png", href: "pure-logo.svg" }]],
   themeConfig: {
-    sidebarDepth: 2,
+    sidebarDepth: 0,
     logo: "/pure-logo.svg",
     nav: [
       { text: "首页", link: "/" },
@@ -38,16 +38,14 @@ const config = {
       },
     ],
     sidebar: {
-      sidebarDepth: 2,
+     
       "/frontend/": [
         {
           isGroup: true,
-          sidebarDepth: 2,
           items: [
             {
               text: "javascript",
               link: "/frontend/javascript",
-              sidebarDepth: 2,
             },
             {
               text: "css",
@@ -78,7 +76,6 @@ const config = {
       "/vue/": [
         {
           isGroup: true,
-          sidebarDepth: 2,
           items: [
             {
               text: "Vue",
@@ -90,7 +87,6 @@ const config = {
       "/react/": [
         {
           isGroup: true,
-          sidebarDepth: 2,
           text: "react",
           items: [
           ],
@@ -99,11 +95,9 @@ const config = {
       "/algorithm/": [
         {
           isGroup: true,
-          sidebarDepth: 2,
           items: [
             {
               text: "LeetCode",
-              sidebarDepth: 2,
               link: "/algorithm/leetcode",
             },
             {
@@ -116,7 +110,6 @@ const config = {
       "/blog/": [
         {
           isGroup: true,
-          sidebarDepth: 2,
           text: "博客",
           items: [
           ],
