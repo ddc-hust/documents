@@ -6,7 +6,7 @@ const config = {
   description: " ",
   lastUpdated: true,
   base: "/documents/",
-  // lang: 'zh-CN',
+  // lang: 'zh-CN',,
   head: [["link", { rel: "icon", type: "image/png", href: "pure-logo.svg" }]],
   themeConfig: {
     sidebarDepth: 2,
