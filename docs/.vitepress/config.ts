@@ -39,7 +39,6 @@ const config = {
     ],
     sidebar: {
       displayAllHeaders: true,
-      sidebar: 'auto',
       sidebarDepth: 2,
       "/frontend/": [
         {
