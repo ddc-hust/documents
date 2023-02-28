@@ -9,6 +9,7 @@ const config = {
   // lang: 'zh-CN',
   head: [["link", { rel: "icon", type: "image/png", href: "pure-logo.svg" }]],
   themeConfig: {
+    sidebarDepth: 2,
     logo: "/pure-logo.svg",
     nav: [
       { text: "首页", link: "/" },
