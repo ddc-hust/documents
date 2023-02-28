@@ -38,6 +38,7 @@ const config = {
       },
     ],
     sidebar: {
+      sidebarDepth: 2,
       "/frontend/": [
         {
           isGroup: true,
