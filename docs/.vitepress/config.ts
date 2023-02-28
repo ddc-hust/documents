@@ -40,7 +40,6 @@ const config = {
       "/frontend/": [
         {
           isGroup: true,
-
           sidebarDepth: 2,
           items: [
             {
