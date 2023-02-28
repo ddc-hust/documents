@@ -41,7 +41,7 @@ const config = {
         {
           isGroup: true,
 
-          sidebarDepth: 3,
+          sidebarDepth: 2,
           items: [
             {
               text: "javascript",
@@ -76,6 +76,7 @@ const config = {
       "/vue/": [
         {
           isGroup: true,
+          sidebarDepth: 2,
           items: [
             {
               text: "Vue",
@@ -87,6 +88,7 @@ const config = {
       "/react/": [
         {
           isGroup: true,
+          sidebarDepth: 2,
           text: "react",
           items: [
           ],
@@ -95,6 +97,7 @@ const config = {
       "/algorithm/": [
         {
           isGroup: true,
+          sidebarDepth: 2,
           items: [
             {
               text: "LeetCode",
@@ -110,6 +113,7 @@ const config = {
       "/blog/": [
         {
           isGroup: true,
+          sidebarDepth: 2,
           text: "博客",
           items: [
           ],
