@@ -46,6 +46,7 @@ const config = {
             {
               text: "javascript",
               link: "/frontend/javascript",
+              sidebarDepth: 2,
             },
             {
               text: "css",
