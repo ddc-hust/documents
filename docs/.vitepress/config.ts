@@ -102,11 +102,11 @@ const config = {
             {
               sidebarDepth: 2,
               text: "LeetCode",
-              link: "/algorithm/leetcode",
+              link: "/algorithm/leetcode"
             },
             {
               text: "手写js",
-              link: "/algorithm/手写js",
+              link: "/algorithm/手写js"
             }
           ],
         },
@@ -123,55 +123,55 @@ const config = {
     socialLinks: [{ icon: "github", link: "https://github.com/ddc-hust/documents" }],
   },
   slide: {
-    "/frontend/": [
-      {
-        isGroup: true,
-        text: "大前端",
-        children: [
-          "/frontend/javascript.md",
-          "/frontend/browser.md",
-          "/frontend/nodejs.md",
-          "/frontend/http.md",
-        ],
-      },
-    ],
-    "/vue/": [
-      {
-        isGroup: true,
-        text: "vue",
-        children: ["/vue/next-tick.md", "/vue/keep-alive.md"],
-      },
-    ],
-    "/react/": [
-      {
-        isGroup: true,
-        text: "react",
-        children: ["/react/hook.md", "/react/fiber.md"],
-      },
-    ],
-    "/algorithm/": [
-      {
-        isGroup: true,
-        text: "算法",
-        children: ["/algorithm/data-struct.md", "/algorithm/sort.md"],
-      },
-    ],
-    "/blog/": [
-      {
-        isGroup: true,
-        text: "blog",
-        children: [
-          "/blog/actions.md",
-          "/blog/nodejs-cache.md",
-          "/blog/next-tick.md",
-          "/blog/element-validate.md",
-          "/blog/functional.md",
-          "/blog/bit-operation.md",
-          "/blog/vue2-interview.md",
-          "/blog/vue3-interview.md",
-        ],
-      },
-    ],
+    // "/frontend/": [
+    //   {
+    //     isGroup: true,
+    //     text: "大前端",
+    //     children: [
+    //       "/frontend/javascript.md",
+    //       "/frontend/browser.md",
+    //       "/frontend/nodejs.md",
+    //       "/frontend/http.md",
+    //     ],
+    //   },
+    // ],
+    // "/vue/": [
+    //   {
+    //     isGroup: true,
+    //     text: "vue",
+    //     children: ["/vue/next-tick.md", "/vue/keep-alive.md"],
+    //   },
+    // ],
+    // "/react/": [
+    //   {
+    //     isGroup: true,
+    //     text: "react",
+    //     children: ["/react/hook.md", "/react/fiber.md"],
+    //   },
+    // ],
+    // "/algorithm/": [
+    //   {
+    //     isGroup: true,
+    //     text: "算法",
+    //     children: ["/algorithm/data-struct.md", "/algorithm/sort.md"],
+    //   },
+    // ],
+    // "/blog/": [
+    //   {
+    //     isGroup: true,
+    //     text: "blog",
+    //     children: [
+    //       "/blog/actions.md",
+    //       "/blog/nodejs-cache.md",
+    //       "/blog/next-tick.md",
+    //       "/blog/element-validate.md",
+    //       "/blog/functional.md",
+    //       "/blog/bit-operation.md",
+    //       "/blog/vue2-interview.md",
+    //       "/blog/vue3-interview.md",
+    //     ],
+    //   },
+    // ],
   },
 };
 
