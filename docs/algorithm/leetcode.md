@@ -779,6 +779,76 @@ var reverseWord = function(str, start, end) {	//翻转字符串
 * 注意：本题中堆内存放的是长度为2的数组，索引为0的位置，存放key，索引为1的位置存放value（出现次数）。所以比较函数，比较的是`a[1] - b[1] （索引为1）`
 * 堆就是一颗完全二叉树，保证父子节点的顺序关系
 
+```js
+/**
+  * 前k的问题，使用堆结构，小顶堆，堆顶是产生堆中最小的元素，
+  * 维护一个最大长度为k的堆，当有新元素加入时，如果长度小于k,直接加入堆即可。
+  * 如果长度大于等于k了，则先调整堆，弹出堆内最小的元素，再加入新元素，即可维护前k高的元素
+  * 用map存储每一个数出现的频率
+
+  * 调整堆：从最后一个非叶子节点开始调整，每个非叶子节点从上往下调整
+  */
+var topKFrequent = function(nums, k) {
+    let map = new Map();
+    for(let i = 0; i < nums.length; i++) {
+        map.set(nums[i], map.has(nums[i]) ? map.get(nums[i]) + 1 : 1);
+    }
+    let heap = new Array();
+
+
+    let swap = function(s, t) {
+        let temp = heap[t];
+        heap[t] = heap[s];
+        heap[s] = temp;
+    }
+
+    let adjust = function(index) {//调整以该节点为根的堆，从上往下调整
+        for(let k = 2* index + 1; k < heap.length; k = 2 * k + 1) {
+            let min = heap[index][1];
+            let minIndex = index;
+            if((k+1) < heap.length && heap[k+1][1] < min) {
+                min = heap[k+1][1];
+                minIndex = k + 1;
+            }else if(heap[k][1] < min) {
+                min = heap[k][1];
+                minIndex = k;
+            }
+            if(minIndex !== index) {//需要调整堆,for循环继续
+                swap(minIndex, index);
+                index = k;
+            }else {//不需要调整堆
+                break;
+            }
+        }
+    }
+
+
+    let adjustHeap = function() {//调整堆的结构,从最后一个非叶子节点开始
+        for(let i = Math.floor(heap.length / 2) -1; i >= 0; i--) {
+            adjust(i);
+        }
+    }
+    
+    for(let pair of map.entries()) {//pair[0]存储元素值，pair[1]存储出现的次数
+        if(heap.length < k) {//堆还没满，可以直接加在末尾，
+            heap.push(pair);
+            
+        }else {//堆的长度为k了，已经满了，调整堆，弹出最小的元素,并压入新元素
+            adjustHeap();
+            if(heap[0][1] < pair[1]) {
+                heap.shift();
+                heap.push(pair);
+            } 
+        }
+        
+    }
+    
+    return heap.map((item) => item[0])
+};
+```
+
+
+
 ### 总结
 
 * 栈先进后出，队列后进先出
