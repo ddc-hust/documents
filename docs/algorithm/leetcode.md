@@ -3259,6 +3259,67 @@ var sortArray = function(nums) {
 };
 ```
 
+### 2. 堆排序
+
+* 选取最后一个非叶子节点，该非叶子节点的索引为`arr.length/2 - 1`。调整以该非叶子节点为顶点的堆，使其为大顶堆（注意这里的调整顺序是从上往下的）
+* 依次调整所有的非叶子节点，每次调整非叶子节点的时候，都是调整以该非叶子节点为根的小堆，。这样就可以保证在冒出最大元素的时候，该堆始终是大顶堆
+* 把堆顶元素和堆尾元素交换，
+* 重新调整下一个堆
+* 注意的地方：
+  1. 判断是否是大顶堆的时候， 需要把当前节点和孩子节点中较大的交换，需要考虑到当前节点可能没有右孩子，但一定有左孩子，
+  2. 调整大顶堆的时候是从上往下调整的，for循环（该方法值得借鉴，自己不会）
+
+```js
+/**
+ * 代码逻辑：
+ * 1. 每次交换堆顶和末尾元素算一次，堆排序需要执行nums.length次。
+ *    所以首先是一个for循环，调用函数，函数的参数是每次构造堆的长度
+ * 2. 构造堆的过程，首先是确定最后一个非叶子节点，调整以该非叶子节点为根的堆，
+ *    然后循环遍历所有的非叶子节点。这样才能保证是一个大顶堆
+ * 3. 最后就是交换元素就行
+ */
+var sortArray = function(nums) {
+    
+    let swap = (a, b) => {
+        let temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
+    }
+
+    //调整以index为堆顶的堆，从上往下，
+    let adjust = (index,len) => {//index表示要调整的最后一个非叶子节点的索引
+        for(let k = index * 2 + 1; k < len; k = 2 * k + 1) {
+            let maxIndex = nums[index] > nums[k] ? index: k;
+            if((k + 1) < len && nums[k + 1] > nums[maxIndex]) {
+                maxIndex = k+1;
+            }
+            if(maxIndex === index) {    //已经是大顶堆了，不用调了
+                break;
+            }else {        //有调动，那么它下面的也要调，所以循环继续
+                swap(maxIndex, index);
+                index = k;
+            }
+        }
+    }
+
+    let heapSort = (len) => {//len表示当前要调整的堆的长度
+        for(let i = Math.floor(len/2) - 1; i >= 0; i--) {//遍历所有的非叶子节点，调整整个堆结构
+            adjust(i,len);
+        }//这一步完成之后，就会得到一个严格的大顶堆，接下来就是交换的操作
+        swap(0, len - 1);
+    }
+    
+    for(let i = 0; i < nums.length; i++) {//堆排序的过程，需要完成nums.length步
+        heapSort(nums.length - i);
+    }
+    return nums;
+};
+```
+
+
+
+
+
 ## 扩展
 
 ### 1. 小于当前数字的个数

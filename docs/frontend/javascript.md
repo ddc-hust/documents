@@ -442,3 +442,299 @@ console.log("script sync part end");
 
   `compose`执行是从右到左的。而管道函数，执行顺序是从左到右执行的
 
+## 13. promise
+
+* 异步编程的解决方案，链式操作降低编码难度，代码可读性强
+
+* promise对象有三种状态：
+
+  * `pending`（进行中）
+  * `fulfilled`（已成功）
+  * `rejected`（已失败）
+
+* **特点：**
+
+  - 对象的状态不受外界影响，只有异步操作的结果，可以决定当前是哪一种状态
+  - 一旦状态改变（从`pending`变为`fulfilled`和从`pending`变为`rejected`），就不会再变，任何时候都可以得到这个结果
+
+* **promise实例**
+
+  ```js
+  const promise = new Promise(function(resolve, reject) {});
+  ```
+
+  - `resolve`函数的作用是，将`Promise`对象的状态从“未完成”变为“成功”
+  - `reject`函数的作用是，将`Promise`对象的状态从“未完成”变为“失败”
+
+* **实例方法**
+
+  * `then()：`状态发生改变时的回调函数。第一个参数是`resolved`状态的回调函数，第二个参数是`rejected`状态的回调函数。返回新的`promise`实例
+  * `catch()`：发生错误时的回调。错误具有“冒泡”性质，会一直向后传递，直到被捕获为止
+  * `finally()`：不管 Promise 对象最后状态如何，都会执行的操作
+
+* **构造函数的方法**
+
+  * all()：将多个 `Promise`实例，包装成一个新的 `Promise`实例。`const p = Promise.all([p1, p2, p3]);`
+  * race()：有一个实例率先改变状态，`p`的状态就跟着改变
+  * allSettled()：都返回结果了，p才完成
+  * resolve()
+  * reject()
+  * try()
+
+## 14. `for...in...`和`for...of...`
+
+* `for...in...`：用于枚举对象中的非符号键的属性。由于ECMAScript中对象的属性是无序的，所以其遍历的结果也是不一样的
+
+* `for...of...`：用于遍历可迭代的对象，会按照可迭代对象的next方法产生值的顺序迭代元素
+
+* ```js
+  let map = new Map([[1,3], [2, 0]]);
+  let arr = [1,2,3];
+  for(let i in arr) {//for in遍历的可枚举对象的属性。输出的是索引
+    console.log(i);
+  }
+  for(let i of arr) {//for of遍历的可迭代对象的值。输出的是值
+    console.log(i)
+  }
+  for(let i in map) {//for in遍历的可枚举对象的属性，无输出，因为map不是可枚举的对象
+    console.log(i);
+  }
+  for(let i of map) {//for of遍历的可迭代对象的值。输出的是[ 1, 3 ] [ 2, 0 ]
+    console.log(i)
+  }
+  ```
+
+## 15. 生成器generator
+
+* 函数名称前面加一个星号（*）表示它是一个生成器。只要是可以定义 函数的地方，就可以定义生成器
+* 生成器对象一开始处于暂停执行（suspended）的状态。与 迭代器相似，生成器对象也实现了 Iterator 接口，因此具有 next()方法。调用这个方法会让生成器开始或恢复执行
+* 生成器函数在遇到 yield 关键字之前会正常执行。遇到这个关键字后，执行会停止
+* 函数作用域的状态会被保留。停止执行的生 成器函数只能通过在生成器对象上调用 next()方法来恢复执行。
+
+```js
+function* generatorFn() { 
+ yield; 
+} 
+let generatorObject = generatorFn(); 
+console.log(generatorObject.next()); // { done: false, value: undefined } 
+console.log(generatorObject.next()); // { done: true, value: undefined } 
+```
+
+* **作用**
+
+  1. 生成器对象可作为迭代对象
+
+     ```js
+     function* generatorFn() { 
+          yield 1; 
+          yield 2; 
+          yield 3; 
+     } 
+     for (const x of generatorFn()) { 
+      	console.log(x); 
+     } 
+     ```
+
+  2. 使用yield实现输入和输出
+
+     ```js
+     function* generatorFn(initial) { 
+          console.log(initial); 
+          console.log(yield); 
+          console.log(yield); 
+     } 
+     let generatorObject = generatorFn('foo'); 
+     generatorObject.next('bar'); // foo 
+     generatorObject.next('baz'); // baz 
+     generatorObject.next('qux'); // qux 
+     ```
+
+  3. 产生可迭代对象
+
+     ```js
+     function* generatorFn() { 
+      	yield* [1, 2, 3]; 
+     }
+     ```
+
+* **使用场景**：
+
+  1. 异步操作同步化
+
+     ```js
+     function * loadUI() {
+         start();
+         yield readFile();
+         end();
+     }
+     var loader = loadUI();
+     loader.next()//加载
+     loader.next()//卸载
+     ```
+
+     
+
+  2. 迭代对象，在对象上实现iterator接口
+
+     ```js
+     function* iterEntries(obj) {
+       let keys = Object.keys(obj);
+       for (let i=0; i < keys.length; i++) {
+         let key = keys[i];
+         yield [key, obj[key]];
+       }
+     }
+     
+     let myObj = { foo: 3, bar: 7 };
+     for (let [key, value] of iterEntries(myObj)) {
+       console.log(key, value);
+     }
+     ```
+
+## 16.异步解决方案
+
+1. 回调函数
+
+2. `promise`：解决回调地狱，将回调函数的嵌套调用，改成链式调用
+
+3. `generator`：`yield`可以暂停函数的执行，`next`方法用于恢复函数的执行。（将异步任务同步化）
+
+   ```js
+   const gen = function* () {
+     const f1 = yield readFile('/etc/fstab');
+     const f2 = yield readFile('/etc/shells');
+     console.log(f1.toString());
+     console.log(f2.toString());
+   };
+   ```
+
+4. `async/await`：`async`实际是`generator`的语法糖，可以自动执行`generator`函数，不需要使用`next`恢复
+
+   ```js
+   const asyncReadFile = async function () {
+     const f1 = await readFile('/etc/fstab');
+     const f2 = await readFile('/etc/shells');
+     console.log(f1.toString());
+     console.log(f2.toString());
+   };
+   ```
+
+* **区别**：
+  1. `promise`和`async/await`是专为处理异步操作的
+  2. `generator`函数可用于对象迭代，控制输出等
+  3. `geneartor`和`async/await`都需要搭配`promise`使用
+
+## 17. ES6数组新增扩展
+
+1. **扩展运算符**：将数组转为逗号分割的参数序列
+
+   * 通过扩展运算符实现的是浅拷贝，修改了引用指向的值，会同步反映到新数组
+
+   ```js
+   //转成数组
+   [...document.querySelectorAll('div')]
+   //数组复制
+   const a1 = [1, 2];
+   const [...a2] = a1;
+   
+   ```
+
+2. **`Array.from`**：将两类对象转化成数组，一类是类似数组的对象，一类是可遍历的对象（包括es6新增的set和map）
+
+   ```js
+   let arrayLike = {	//注意索引是0，1，2。该类是类似数组的对象
+       '0': 'a',
+       '1': 'b',
+       '2': 'c',
+       length: 3
+   };
+   let arr2 = Array.from(arrayLike); // ['a', 'b', 'c']
+   
+   let map = new Map();//可遍历的对象，也能转化成数组
+   map.set("a", 1);
+   map.set("b", 2);
+   console.log(Array.from(map))//[ [ 'a', 1 ], [ 'b', 2 ] ]
+   ```
+
+3. **`Array.of`**：用于将一组值转化成数组，
+
+## 18. ES6对象新增扩展
+
+* **属性的简写**：键名和值名相等的时候，可简写
+* **属性名表达式**
+* 
+
+## 19. ES6的set和map
+
+1. set：集合，无序，不重复（set的键名和值是相等的）
+
+   * add()
+   * delete()
+   * has()
+   * clear()
+
+   ```js
+   const set = new Set([1,3]);
+   set.add(4).add(5)//链式调用
+   ```
+
+   * 遍历方法：
+     - keys()：返回键名的遍历器
+     - values()：返回键值的遍历器
+     - entries()：返回所有成员的遍历器
+     - forEach()：遍历 Map 的所有成员
+
+2. weakset：成员**只能是引用类型，**，**没有遍历操作的API，没有size属性****
+
+3. map：键值对
+
+   * set()、get()、has()、delete()、clear()
+   * 遍历方法同set
+
+4. weakmap：**键必须是对象，没有遍历操作的API，没有clear清空方法**
+
+## 20.代理proxy
+
+* 用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）
+
+  ```js
+  var proxy = new Proxy(target, handler)
+
+* 拦截和监视外部对对象的访问
+
+* 在复杂操作前，对操作进行校验和对所需资源进行管理
+
+* 降低函数或类的复杂度
+
+  ```js
+  //拦截对数组的访问
+  function createArray(...elements) {
+    let handler = {
+      get(target, propKey, receiver) {
+        let index = Number(propKey);
+        if (index < 0) {
+          propKey = String(target.length + index);
+        }
+        return Reflect.get(target, propKey, receiver);
+      }
+    };
+  
+    let target = [];
+    target.push(...elements);
+    return new Proxy(target, handler);
+  }
+  
+  let arr = createArray('a', 'b', 'c');
+  arr[-1] // c
+  ```
+
+## 21. ES6的Module
+
+* es6的模块的加载在编译的时候就完成了，其在编译的时候就确定模块之间的依赖关系，以及输出和输出变量。由于是编译时加载的，使得静态分析成为可能。
+
+```js
+// ES6模块
+import { stat, exists, readFile } from 'fs';
+```
+
+* 支持动态加载：import()作为函数，参数是加载的路径
