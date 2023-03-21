@@ -145,6 +145,12 @@
 1. **两栏布局：**
 
    1. 左侧使用float，右侧使用margin，container使用BFC（以免高度塌陷）
+
+       <!--两栏布局：宽度要占满全部-->
+
+        <!--左侧使用float浮动，使其脱离文档流，右侧使用margin就可以实现两栏布局-->
+
+        <!--注意left和right要设置高度，子容器的高度不会继承父容器-->
    2. 使用flex，设置左边的宽度，右边的宽度使用100%
 
    ```css
@@ -165,13 +171,160 @@
    </div>
    ```
 
-   
+   * 父容器使用flex，left的宽度是固定的，right使用flex-grow为1的话，就可以使得right分到身下得空间。
+   * 这个时候，left的高度变化，right的高度也会变化
+   * 当right中的子元素的高度超过right的高度的时候，right的高度虽然不会变化，但是right的子元素就溢出了，这不是我们想要的结果，所以我们在right中使用overflow:auto
+   * （通过使用flex布局，固定左侧宽度，右侧使用flex-grow。container的高度要固定）
+   * **注意：**height属性不能继承，可以使用height:100%使得子容器的高度和父容器的高度相等
 
 2. **三栏布局**：
 
    1. 左右使用float，中间使用margin设置边距。左右两边固定宽度，中间宽度自适应（缺点：中间内容最后加载）。container使用BFC
+
+   ```html
+   <head>
+       <meta charset="UTF-8">
+       <title>三栏布局</title>
+       <!--float+margin。两侧使用浮动，中间宽度自适应，不设置width,缺点中间内容最后加载-->
+       <style>
+           .container {
+               height: 200px;
+           }
+   
+           .left {
+               float: left;
+               width: 100px;
+               height: 100%;
+               background-color: aquamarine;
+           }
+   
+           .middle {
+               background-color:black;
+               height: 100%;
+               margin-left : 0px;
+               margin-right: 0px;
+           }
+   
+           .right {
+               float: right;
+               background-color: blueviolet;
+               width: 100px;
+               height: 100%;
+               overflow: auto;
+           }
+       </style>
+   </head>
+   
+   <body>
+       <div class="container">
+           <div class="left"></div>
+           <div class="right"></div>
+           <div class="middle"></div><!--需要把中间放在下面，不然right会沉在middle的下方-->
+           
+       </div>
+   </body>
+   
+   </html>
+   ```
+
    2. 左右使用absolute定位（脱离文档流），container使用relative定位，中间占满一行，使用margin留出间隔
+
+   ```html
+   <head>
+       <meta charset="UTF-8">
+       <title>三栏布局</title>
+       <!--左右两边absolute,注意使用top和right和left，设置便宜，中间使用margin留出固定宽度-->
+       <style>
+           .container {
+               position: relative;
+               height: 200px;
+           }
+   
+           .left {
+               position: absolute;
+               left : 0px;
+               width: 100px;
+               height: 100%;
+               background-color: aquamarine;
+           }
+   
+           .middle {
+               background-color:black;
+               height: 100%;
+               margin-left : 110px;
+               margin-right: 110px;
+           }
+   
+           .right {
+               position: absolute;
+               top:0px;
+               right: 0px;
+               background-color: blueviolet;
+               width: 100px;
+               height: 100%;
+               overflow: auto;
+           }
+       </style>
+   </head>
+   
+   <body>
+       <div class="container">
+           <div class="left"></div>
+           <div class="middle"></div>
+           <div class="right"></div>
+           
+       </div>
+   </body>
+   ```
+
    3. flex布局：盒内元素两端对其，将中间元素设置为`100%`宽度，或者设为`flex:1`，即可填充空白。盒内元素的高度撑开容器的高度
+
+   ```html
+   <head>
+       <meta charset="UTF-8">
+       <title>三栏布局</title>
+       <!--使用flex，left使用flex-start,right使用flex-end。中间flex-grow即可占满一行-->
+       <style>
+           .container {
+               display: flex;
+               height: 200px;
+           }
+   
+           .left {
+               justify-content: flex-start;
+               width: 100px;
+               height: 100%;
+               background-color: aquamarine;
+           }
+   
+           .middle {
+               background-color:black;
+               height: 100%;
+               flex-grow: 1;
+           }
+   
+           .right {
+               justify-content: flex-end;
+   
+               background-color: blueviolet;
+               width: 100px;
+               height: 100%;
+               overflow: auto;
+           }
+       </style>
+   </head>
+   
+   <body>
+       <div class="container">
+           <div class="left"></div>
+           <div class="middle"></div>
+           <div class="right"></div>
+           
+       </div>
+   </body>
+   ```
+
+   
 
 3. 详见https://vue3js.cn/interview/css/column_layout.html#%E4%B8%89%E3%80%81%E4%B8%89%E6%A0%8F%E5%B8%83%E5%B1%80
 
@@ -190,5 +343,9 @@
   display: flex;
   ```
 
+## 8. flex：1
 
+* `flex-grow: 1` ：当子容器的宽度大小小于父容器的大小时，瓜分父容器剩余的空间
+* `flex-shrink：1`：当子容器的大小大于父容器的大小时，吸收超出的空间
+* `flex-basis`：0%：用来设置盒子的基准宽度，并且basis和width同时存在basis会把width干掉
 

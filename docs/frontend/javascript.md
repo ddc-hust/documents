@@ -480,6 +480,7 @@ console.log("script sync part end");
   * resolve()
   * reject()
   * try()
+  * 
 
 ## 14. `for...in...`和`for...of...`
 
@@ -738,3 +739,133 @@ import { stat, exists, readFile } from 'fs';
 ```
 
 * 支持动态加载：import()作为函数，参数是加载的路径
+
+## 22. HasOwnProperty()方法
+
+* hasOwnProperty()用于判断一个对象的是否含有特定的自身属性，返回布尔值
+* 因为一个对象，会有继承属性，为了过滤掉继承的属性，就可以使用hasOwnProperty()函数
+* for...in...用于遍历可枚举对象的键属性。一个对象是可以枚举的。
+
+```js
+for (let i in obj)//遍历obj的键属性,包含了继承属性
+    
+for(let i in obj) {
+    if(obj.hasOwnProperty(i)) {
+        //这样才获取到的是obj自己的键属性
+    }
+}
+```
+
+## 23. Object.defineProperty()
+
+* 用于定义对象的属性方法
+* 参数有三个：
+  * 要定义属性的对象。
+  * 要定义或修改的属性的名称。
+  * 一个描述符对象，用于指定属性的特性。
+
+```js
+const obj = {};
+
+Object.defineProperty(obj, 'name', {
+  value: 'John',
+  writable: false,
+  enumerable: true,//设置是否可枚举，不可枚举的话，就不能使用for...in...访问到
+  configurable: true
+});
+
+console.log(obj.name); // "John"
+obj.name = 'Jane'; // 抛出 TypeError，因为 name 属性是不可写的
+```
+
+## 24. Object.getPrototypeOf()
+
+* 用于获取一个对象的原型对象
+
+```js
+let map = new Map()//构造函数的方式创建对象
+console.log(Object.getPrototypeOf(map))//map
+```
+
+* 每个对象都有一个`__proto__`属性，指向该对象的原型对象，是每个对象独有的属性。`__proto__`的使用从而形成原型链
+* `Object.prototype`是所有对象所共有的属性
+
+1. 使用 `Object.prototype.toString()` 方法获取变量的类型。
+
+```js
+javascriptCopy codelet a = 123;
+let b = 'hello';
+let c = [1, 2, 3];
+console.log(Object.prototype.toString.call(a)); // [object Number]
+console.log(Object.prototype.toString.call(b)); // [object String]
+console.log(Object.prototype.toString.call(c)); // [object Array]
+```
+
+1. 使用 `Object.prototype.hasOwnProperty()` 方法判断对象是否拥有指定的属性。
+
+```js
+javascriptCopy codelet obj = {a: 1, b: 2};
+console.log(obj.hasOwnProperty('a')); // true
+console.log(obj.hasOwnProperty('c')); // false
+```
+
+1. 使用 `Object.prototype.isPrototypeOf()` 方法判断对象是否是另一个对象的原型。
+
+```js
+javascriptCopy codelet parent = {a: 1};
+let child = Object.create(parent);
+console.log(parent.isPrototypeOf(child)); // true
+console.log(Object.prototype.isPrototypeOf(child)); // true
+```
+
+1. 使用 `Object.prototype.valueOf()` 方法获取对象的原始值。
+
+```js
+javascriptCopy codelet date = new Date();
+console.log(date.valueOf()); // 1646988781000 (当前时间的时间戳)
+```
+
+## 25. 原型
+
+* 简单来说，原型就是一个对象，它包含了共享给其他对象的属性和方法。每个对象都有一个指向其原型对象的内部链接，这个链接可以通过 `__proto__` 属性访问。当我们访问一个对象的属性时，如果该对象本身没有该属性，则会在其原型对象中查找，如果还没有，则会在原型链上一层一层地向上查找，直到找到该属性或者到达原型链的末端
+
+## 26. 可枚举属性
+
+* 在 JavaScript 中，对象的属性可以被定义为可枚举或不可枚举。可枚举属性是指可以通过 `for...in` 循环或 `Object.keys()` 方法枚举到的属性。不可枚举属性则是指不能被枚举到的属性。
+
+  在默认情况下，通过对象字面量或 `Object.create()` 方法创建的对象的属性都是可枚举的。而通过 `Object.defineProperty()` 方法创建的属性，可以被显式地定义为可枚举或不可枚举。
+
+##  27. Object.assign
+
+* 将一个或多个源对象的所有可枚举属性复制到目标对象中，并返回目标对象。
+
+* 如果目标对象中有同名属性，那么后面的源对象会覆盖前面的源对象中的属性值。
+
+  ```js
+  Object.assign(target, ...sources)
+  ```
+
+* 用于对象的浅拷贝，如果源对象中包含嵌套的对象，那么这些嵌套对象的引用会被直接复制到目标对象中，而不会进行深拷贝。
+
+```js
+const target = { a: 1, b: 2 };
+const source = { b: 4, c: 5 };
+const result = Object.assign(target, source);
+
+console.log(target); // { a: 1, b: 4, c: 5 }
+console.log(result); // { a: 1, b: 4, c: 5 }
+```
+
+## 28. constructor属性
+
+constructor属性是一个指向创建该对象的构造函数的引用，通常用于检查对象的类型。例如：
+
+```js
+javascriptCopy codefunction Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const person = new Person('Alice', 30);
+console.log(person.constructor === Person); // true
+```

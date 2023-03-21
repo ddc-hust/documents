@@ -104,7 +104,33 @@ nums.sort((a, b) => a - b)	// a小于b的话，返回负值；a大于b的话，�
 queue.splice(index, 0, people[i])
 ```
 
+### 8. 生成随机数
 
+* 生成start到end的随机数
+
+```js
+Math.round(Math.random() * (end - start + 1) ) + start;//注意这里的加1
+Math.round(Math.random()* 9 + 2);//生成2到10之间的随机数
+
+//生成5到40之间的整数
+Math.round(Math.random() * 36)) + 5//这里乘36是因为，Math.random不能生成1,乘于36后会生成0到36之间的数，但是不包含36。最后使用Math.round()函数就可以向下取整。最终产生5到40之间的整数
+```
+
+* Math.random()生成0到1.0之间的随机数。包含0但是不包含1。，Math.round()四舍五入
+
+### 9. 正则表达式
+
+* `\W等价于[^0-9A-Za-z_]`，replace函数中可以替换正则表达式匹配的子字符串
+
+* ```js
+     //126, 力扣替换字符串的题目，也可以使用正则表达式，\W等价于[^0-9A-Za-z_]
+      //本题将所有的不是字符的数替换掉，只留下字符数字
+      let res  = s.replace(/\W|_/g, "").toLowerCase();
+      let t = res.split("").reverse().join("");
+      return res === t;
+  ```
+
+* 
 
 ## 数组
 
@@ -640,6 +666,37 @@ var reverse = function(str, left, right) {
     }
     return arr.join("");
 }
+
+
+ /**
+ * 找规律，反转的区间是有规律的，从2*i*k到（2* i+1）*k-1
+ * 然后再反转不足k的部分
+  */
+var reverseStr = function(s, k) {
+    let arr = s.split("");
+    let reverse = function(start, end) {
+        let swap = function(left, right) {
+            let temp = arr[right];
+            arr[right] = arr[left];
+            arr[left] = temp; 
+        }
+        let left = start;
+        let right = end;
+        while(left < right) {
+            swap(left, right);
+            left++;
+            right--;
+        }
+    };
+    let i = 0;
+    for(; (2 * i + 1) * k - 1 < s.length; i++) {
+        reverse(2 * i * k, (2 * i +1) * k - 1);
+    }
+    if(s.length -1> 2 * i * k) {//反转不足k的部分
+        reverse(2 * i * k, s.length - 1);
+    }
+    return arr.join("");
+};
 ```
 
 ### 2. 左旋转字符串
@@ -745,13 +802,199 @@ var reverseWord = function(str, start, end) {	//翻转字符串
   
   ```
 
+### 4. 替换空格
+
+```js
+ /***
+ * 不使用额外空间
+ * 先扩充数组，然后双指针填充。由于js中数组是不定长的，所以arr数组可以直接通过设置length扩容
+  */
+var replaceSpace = function(s) {
+    let count = 0;
+    for(let i = 0; i < s.length; i++) {
+        if(s[i] === " ") {
+            count++;
+        }
+    }
+    let arr = new Array(s.length + 2 * count);//arr数组扩容
+    let left = s.length - 1;
+    let right = arr.length - 1;
+    while(left >= 0) { 
+        if(s[left] === " ") {
+            arr[right--] = '0';
+            arr[right--] = "2";
+            arr[right] = "%"
+        }else {
+            arr[right] = s[left];
+        }
+        right--;
+        left--;
+    }
+    return arr.join("");
+};
+```
+
+
+
 ## 双指针
+
+### 1. 三数之和
+
+```js
+/**
+ * 首先选定一个数，再判断另外两个数的组合情况。另外两个数的和必须是sum-第一个数
+ * 这种判断两个数和是否等于另一个数的题，就是将数组排序，使用双指针，判断左右指针的和与target的关系
+ * 由于答案中不能包含重复数组，什么时候会重复呢？比如第一个数重复了，那么答案一定有重复的，所以对第一个数去重
+ * 对left去重的时候，需要考虑到去重的必须是left可能取到的值
+  */
+var threeSum = function(nums) {
+    let result = [];
+    nums.sort((a, b) => a - b);
+    for(let i = 0; i < nums.length - 2; i++) {
+        if(i > 0 && nums[i] === nums[i-1]) continue;//去重
+        let target = -nums[i];
+        let left = i+1;
+        let right = nums.length - 1;
+        while(left < right) {
+            if(left > (i + 1) && nums[left] === nums[left - 1]) {
+                left++;//注意这里的left大于i+1
+                continue;
+            }
+            if(nums[left] + nums[right] === target) {
+                result.push([nums[i], nums[left], nums[right]]);
+                left++;
+                right--;
+            }else if(nums[left] + nums[right] > target){
+                right--;
+            }else {
+                left++;
+            }
+        }
+    }
+    return result;
+};
+```
+
+### 2. 四数之和
+
+```js
+/**
+ * 选定两个数，遍历剩下的数
+  */
+var fourSum = function(nums, target) {
+    let result = [];
+    nums.sort((a, b) => a - b);
+    for(let i = 0; i < nums.length - 3; i++) {
+        if(i > 0 && nums[i] === nums[i-1]) continue;//对i去重
+        for(let j = i + 1; j < nums.length - 2; j++) {
+            if(j > (i+1) &&  nums[j] === nums[j-1]) continue;//对j去重
+            let left = j + 1;
+            let right = nums.length - 1;
+            while(left < right) {
+                if(left > (j+1) && nums[left] === nums[left - 1]) {
+                    left++;
+                    continue;//对left去重
+                }
+                let sum = nums[i] + nums[j] + nums[left] + nums[right];
+                if(sum === target) {
+                    result.push([nums[i], nums[j], nums[left],nums[right]]);
+                    left++;
+                    right--;
+                }else if(sum < target) {
+                    left++;
+                }else {
+                    right--;
+                }
+            }
+        }
+    }
+    return result;
+};
+```
+
+### 3. 快乐数
+
+```js
+ /***
+ * 如果最后sum为1的话，那么这就是快乐数
+ * 不能一直循环；判断是否为1呀？因为有的数不是快乐数，该怎么办？
+ * 不是快乐数的话，由于它会无线循环，无限循环代表着sum会重复出现，只要sum重复出现了
+ * 说明，这个计算会一直循环下去。
+ * 判断之前有没有出现过sum, 判断一个集合中，某个数是否出现过
+ * 使用set数据结构，可以判断是否出现一个元素是否出现在某个集合中
+ * 判断快乐数的时候，重复计算每个数之和，把这部分抽成函数，参数是数，返回sum
+  */
+var isHappy = function(n) {
+    let getSum = function(num) {
+        let sum = 0;
+        while(num) {
+            sum += Math.pow(num % 10, 2);
+            num = Math.floor(num / 10);//第一个踩坑，取十位数的时候，需要向下取整
+        }
+        return sum;//得到这个数的所有位置平方和
+    }
+    let result = new Set();
+    let sum = getSum(n);
+    while(true) {
+        if(sum === 1) return true;
+        else if(result.has(sum)) return false;
+        else {
+            result.add(sum);
+            sum = getSum(sum);
+        }
+    }
+};
+```
+
+
+
+
+
+
 
 ## 栈与队列
 
 ### 1. 匹配问题：
 
 * 采用栈处理（成对匹配）
+
+### 2. 有效的括号
+
+```js
+/**
+ * 匹配问题考虑用栈
+ * 判断括号是否匹配，采用栈的结构
+ * 左括号就入栈
+ * 右括号就出栈，并判断出栈元素是否匹配（借助map判断是否匹配）
+ */
+var isValid = function(s) {
+    var stack = [];
+    var map = new Map();
+    map.set("(", ")");
+    map.set("{", "}");
+    map.set("[", "]");
+    //另一种写法
+    // map = {
+    //     "(": ")",
+    //     "{": "}",
+    //     "[": "]",
+    // }
+    for(var i = 0; i < s.length; i++) {
+        if(map.has(s[i])) {
+            stack.push(s[i]);   //改进的地方：右括号入栈，只需要判断是否相等即可
+        }else {
+            var char = stack.pop();
+            if(map.get(char) !== s[i]) 
+                return false;
+        }
+    }
+    if(stack.length)
+        return false;
+    return true;
+};
+```
+
+
 
 ### 2. 优先队列
 
@@ -760,13 +1003,59 @@ var reverseWord = function(str, start, end) {	//翻转字符串
 * 优先队列：元素被赋予优先级，优先级高的最先删除，（最高级先出）。常常采用堆结构实现。
 * **降序采用小顶堆，升序采用大顶堆**
 
-### 3. 滑动窗口最大值
+### 3. 滑动窗口最大值(单调队列)
 
 * 采用单调队列的数据结构，维护滑动窗口内的最大值，队列前端的元素是最大值
  * 单调队列操作：
  * push:当前元素值大于队列末端元素，弹出队列末端元素，直到队列为空，或者，当前元素小于末端元素
  * pop: 当前元素值等于队列前端元素，弹出队列前端元素。否则，不做操作
  * 这种单调队列，就可以维持当前滑动窗口的最大值在队列前端
+
+```js
+/**
+  * 思路：维护滑动窗口中的最大值，不需要对窗口中的所有元素排序，只需要维护单调递减队列即可
+  * 单调递减队列的push操作：如果当前元素小于等于队列入口元素，直接push
+                            如果当前元素大于队列入口元素（说明队列入口元素不可能成为最大值了）,将队列入口元素弹出。直到小于等于队列入口元素的时候，才push
+  * 单调递减队列的pop操作：如果窗口要丢弃的值，等于队列首的元素值，那么把队列首元素移除队列。否则，不做任何操作
+  * 这样队列首的元素始终是该窗口内的最大值
+  */
+var maxSlidingWindow = function(nums, k) {
+    class MonoQueue {
+        constructor() {
+            this.queue = new Array();
+        }
+        push(value) {
+            while(value > this.queue[this.queue.length - 1]) {
+                this.queue.pop();//大于队列入口元素，弹出队列入口元素
+                
+            }
+            this.queue.push(value);
+        }
+        pop(value) {
+            if(value === this.queue[0]) {//等于队首元素，弹出队首元素
+                this.queue.shift();
+            }
+        }
+        front() {
+            return this.queue[0];
+        }
+    }
+    let monoQueue = new MonoQueue();
+    for(let i = 0; i < k; i++) {
+        monoQueue.push(nums[i]);
+    }
+    let result = new Array();
+    result.push(monoQueue.front());
+    for(let i = 1; i < nums.length - k + 1; i++) {
+        monoQueue.push(nums[i+k-1]);//维护窗口
+        monoQueue.pop(nums[i-1]);
+        result.push(monoQueue.front());
+    }
+    return result;
+};
+```
+
+
 
 ### 4. 前K个高频元素
 
@@ -878,6 +1167,181 @@ var topKFrequent = function(nums, k) {
  * 两层循环，外层循环加入每一层的结果 循环条件queue.length!=0
  * 内层循环，加入某一层的结果，循环条件len!=0
 
+### 对称二叉树
+
+* 轴对称
+
+```js
+/**
+  * 比较的是左右孩子，所以递归函数的参数是两个left和right
+  * 一直递归，当左孩子和右孩子都保证是抽对称的时候，才返回对称
+  * 递归终止条件：当左右孩子都为空的时候，返回true
+                  其它情况返回false
+  */
+let mySymmetric = function(left, right) {
+    if(!left && !right) return true;//注意这个返回true的情况
+    if(!left && right) return false;
+    if(left && !right) return false;
+    if(left.val !== right.val) return false;
+    
+    return mySymmetric(left.right, right.left) && mySymmetric(left.left, right.right);      
+}
+
+var isSymmetric = function(root) {
+    if(!root) return true;
+    return mySymmetric(root.left, root.right);
+};
+```
+
+### 平衡二叉树
+
+* 
+
+```js
+ /**
+  * 递归函数参数是节点，返回值是参数是高度
+  */
+let height = function(node) {
+    if(!node) return 0;
+    let leftHeight = height(node.left);
+    let rightHeight = height(node.right);
+   
+    return Math.max(leftHeight, rightHeight) + 1;//返回左右节点的最大值，如果节点不存在，返回0
+}
+
+var isBalanced = function(root) {
+    if(!root) return true;
+    if( Math.abs(height(root.left) - height(root.right)) > 1 ) return false;//判断当前节点的左右孩子高度
+    
+    return isBalanced(root.left) &&  isBalanced(root.right);//递归判断左孩子和右孩子
+};
+```
+
+### 二叉树的所有路径
+
+```js
+/**
+  * 找路径的过程中，没有返回值，而原函数有返回值，所以再写一个函数
+  * 递归函数终止条件，当node是叶子节点的时候，加入路径
+  */
+var binaryTreePaths = function(root) {
+    let result = [];
+    let path = [];
+    if(!root) return result;
+
+    let backTracing = function(node) {//参数是节点，没有返回值
+        path.push(node.val);
+        if(!node.left && !node.right) {
+            result.push([...path].join("->"));
+            return;
+        }
+        if(node.left) {
+            backTracing(node.left);
+            path.pop();
+        }
+        if(node.right) {
+            backTracing(node.right);
+            path.pop();
+        }
+
+
+    }
+    backTracing(root);
+    return result;
+};
+```
+
+### 左叶子之和
+
+```js
+/**
+  * 求左叶子之和，遍历的时候需要访问右节点，但是右节点的右叶子不能算入，所以叶子不是唯一的判断标准，必须知道是左节点得到的叶子，还是右节点得到的叶子
+  */
+var sumOfLeftLeaves = function(root) {
+    let sum = 0;
+    if(!root) return sum;
+    let cacluLeft = function(node, isLeft) {
+        if(!node.left && !node.right && isLeft) {
+            sum+= node.val;
+            return;
+        }
+        node.left && cacluLeft(node.left, true);
+        node.right && cacluLeft(node.right, false);//中序遍历
+    }
+    cacluLeft(root, false);
+    return sum;
+};
+```
+
+### 找树左下角的值
+
+```js
+/**
+  * 找到最大深度时的值，前序遍历，最大深度后，就更新值，这样后面的不会影响前面的，因为在同一层
+  * 递归参数：节点，当前的深度deep
+  * 递归返回值：只是记录最大深度的节点值，所以没有返回值
+  */
+var findBottomLeftValue = function(root) {
+    let maxDeep = 0;
+
+    let result = 0;
+    let recur = function(node, curDeep) {
+        if(!node) return;
+        curDeep++;
+        if(!node.left && !node.right) {//碰到叶子节点了
+            if(curDeep> maxDeep) {//判断是否深度变大了
+                maxDeep = curDeep;
+                result = node.val;//深度变大就更新最大深度以及结果的值
+            }
+        }
+        recur(node.left, curDeep);
+        recur(node.right, curDeep);
+    }
+    recur(root, 0);
+    return result;
+};
+```
+
+### 路径总和
+
+```js
+/**
+  * 递归参数：当前节点，目标和，
+  * 返回值：找到路径等于targer的就返回true，否则返回false
+  * 递归终止条件：遇到叶子节点，判断路径和是否等于target,如果等于就返回true，不等于的话，返回false。
+  */
+let find = function(node, targetSum,sum) {
+    sum += node.val;
+    if(!node.left && !node.right) {
+        if(sum === targetSum ) return true;
+        return false;
+    }
+    if(node.left) {
+        let result = find(node.left, targetSum, sum);
+        //sum-= node.left.val;注意这里的sum没有减去，因为sum作为参数传递了
+        if(result) return true;
+        
+    }
+    if(node.right) {
+        let result = find(node.right, targetSum, sum);
+        //sum-= node.right.val;
+        if(result) return true;
+        
+    }
+    return false;
+}
+var hasPathSum = function(root, targetSum) {
+    if(!root) return false;
+    return find(root, targetSum, 0);
+};
+```
+
+
+
+
+
+
+
 ### 3. 递归的注意事项
 
 1. **确定递归函数的返回值：**
@@ -962,6 +1426,34 @@ var topKFrequent = function(nums, k) {
 * 中序遍历+后序遍历构造二叉树；前序遍历+中序遍历构造二叉树
   * 采用递归的方法，
   * 注意用数组构造二叉树的题目，**每次分隔尽量不要定义新的数组，**而是通过下标索引直接在原数组上操作，这样可以节约时间和空间上的开销。
+
+* 中序遍历和后序遍历构造数组
+
+```js
+ /***
+  * 有递归的思想在，每次都是拿到中序遍历数组和后序遍历数组，然后两个数组一起构造
+  * 后序遍历的数组的最后一个元素是当前的根节点，根节点左边是中序遍历在该根节点前面的元素
+  * 根节点右边是中序数组中在该节点后面的元素
+  * 递归函数的参数一个是中序数组，一个是后序数组，(xxx不对)
+  * 返回值是中序数组和后数组构成的根节点
+  * 终止条件中序后序数组为0
+  * 一直切割数组不太好，空间复杂度高，所以递归参数应当是start和end
+  */
+var buildTree = function(inorder, postorder) {
+    let recur = function(leftStart, leftEnd, rightStart, rightEnd) {
+        if(leftEnd < leftStart) return null;
+        let node = new TreeNode(postorder[rightEnd]);
+        let rootIndex = inorder.indexOf(node.val);
+        let count = rootIndex - leftStart;
+        node.left = recur(leftStart, rootIndex - 1, rightStart, rightStart + count -1);
+        node.right = recur(rootIndex + 1, leftEnd,rightStart+count, rightEnd -1 );
+        return node;
+    }
+    return recur(0, inorder.length -1, 0, postorder.length - 1);  
+};
+```
+
+
 
 ### 5. 二叉搜索树
 
@@ -1202,6 +1694,22 @@ var lowestCommonAncestor = function(root, p, q) {
     }
    return  travelTree(root,p,q);
 };
+
+ /***
+  * 找到一个节点，该节点的左子树有p,右子树有q,那么就是公共祖先
+  * 递归参数：节点，返回值，返回找到的节点
+  * 好奇怪，这个题
+  */
+var lowestCommonAncestor = function(root, p, q) {
+    if(!root) return null;
+    if(root == q || root == p) return root;
+    let left = lowestCommonAncestor(root.left,p,q);
+    let right = lowestCommonAncestor(root.right,p,q);
+    if(left && right) return root;
+    else if(left && !right) return left;
+    else  return right;
+    
+};
 ```
 
 * 二叉搜索树的最近公共祖先：从上往下搜索，只需判断节点的范围即可
@@ -1210,6 +1718,10 @@ var lowestCommonAncestor = function(root, p, q) {
 /**
  * 搜索树的性质，从上往下遍历即可
  * 当遇到处于p和q之间的节点时，即为最近公共祖先
+ /**
+ * 二叉搜索树的有序性，当遍历的节点的node的值处于p和q之间的时候，node就是公共祖先
+ * 递归参数node,返回值，node
+  */
  */
 var lowestCommonAncestor = function(root, p, q) {
     const findNode = function(root, p, q) {
@@ -1227,6 +1739,25 @@ var lowestCommonAncestor = function(root, p, q) {
     return findNode(root, p, q);
 };
 ```
+
+### 二叉搜索树种的插入操作
+
+```js
+ /**
+ * 不断的和根节点进行比较，递归参数node,返回值节点
+  */
+var insertIntoBST = function(root, val) {
+    if(!root) return new TreeNode(val);
+    if(root.val < val) {//注意这里递归返回值的应用
+        root.right = insertIntoBST(root.right, val);
+    }else {
+        root.left = insertIntoBST(root.left, val);
+    }
+    return root;
+};
+```
+
+
 
 ### 7. 删除二叉搜索树中的节点450
 
@@ -1270,6 +1801,27 @@ var lowestCommonAncestor = function(root, p, q) {
           }
       }
   }
+  
+  
+  /**
+   * 递归参数：节点node,返回值根节点。
+   * 找到key后，取这个树中最大值的节点返回,返回右边节点，因为是搜索树，并把左边节点放在右边的最左孩子下
+    */
+  var deleteNode = function(root, key) {
+      if(!root) return root;
+      if(root.val > key) root.left = deleteNode(root.left, key);
+      else if(root.val < key) root.right = deleteNode(root.right, key);
+      else {
+          if(!root.right) return root.left;
+          let temp = root.right;
+          while(temp.left) {
+              temp = temp.left;
+          }
+          temp.left = root.left;
+          return root.right;
+      }
+      return root;
+  };
   ```
 
 
@@ -1302,6 +1854,34 @@ var lowestCommonAncestor = function(root, p, q) {
       root.right = trimBST(root.right, low, high);
       return root;
   };
+  
+   /**
+   * 递归参数：节点node
+   * 递归返回值: 调整后的新的根节点
+   * 从下往上递归，采用后序遍历
+    */
+  var trimBST = function(root, low, high) {
+      if(!root ) return null;
+      root.left = trimBST(root.left, low, high);
+      root.right = trimBST(root.right, low, high);//更新左右子树
+  
+      if(root.val < low || root.val > high) {//修剪得操作
+          if(!root.left && !root.right) return null;
+          if(!root.left && root.right) {
+              return root.right;
+          }else if(!root.right && root.left) {
+              return root.left;
+          }else {
+              let temp = root.right;
+              while(temp.left) {
+                  temp = temp.left;
+              }
+              temp.left = root.left;
+              return root.right;
+          }
+      } 
+      return root;
+  };
   ```
 
 ### 9. 有序数组转换成二叉树
@@ -1328,6 +1908,24 @@ var lowestCommonAncestor = function(root, p, q) {
   node.val = node.val + pre;  //更改节点的值
   pre= node.val;
   caclu(node.left);
+  
+  /**
+   * 递归：从右到左，右中左，
+   * 递归参数：节点
+   * 返回值：累加值.这里不需要返回值？？
+    */
+  var convertBST = function(root) {
+      let pre = 0;
+      let add = function(node) {
+          if(!node) return 0;
+          add(node.right);
+          node.val = node.val + pre;
+          pre = node.val;
+          add(node.left);
+      }
+      add(root);
+      return root;
+  };
   ```
 
 ### 总结
@@ -1340,6 +1938,8 @@ var lowestCommonAncestor = function(root, p, q) {
 * 三部曲：递归参数、终止条件，单层搜索过程，
 
 ### 组合：
+
+* **回溯+ 递归。需要注意当candidate中包含重复元素的话，就要使用used数组进行剪枝**
 
 ### 1. 组合
 
@@ -1378,6 +1978,41 @@ var lowestCommonAncestor = function(root, p, q) {
 ### 2. 电话号码字母数字的组合
 
 * 考虑到用字典map存储数字和字母的对应关系
+
+* ```js
+  var letterCombinations = function(digits) {
+      let map = new Map([//键是数字类型
+          [2 ,'abc'],
+          [3 , 'def'],
+          [4 , 'ghi'],
+          [5 ,'jkl'],
+          [6 ,'mno'],
+          [7 ,'pqrs'],
+          [8 ,'tuv'],
+          [9 ,'wxyz']
+      ]);   
+      let result = [];
+      let path = [];
+      let backTracing = function(startIndex, path) {
+          if(path.length === digits.length && path.length !== 0) {
+              result.push(path.join(""));
+              return;
+          }
+          for(let i = startIndex; i < digits.length; i++) {
+              let str = map.get(parseInt(digits[i]));//需把string类型的digits中的s转成数字，才能取到
+              for(let j = 0; j < str.length; j ++) {
+                  path.push(str[j]);
+                  backTracing(i+1, path);
+                  path.pop();
+              }
+          }
+      }
+      backTracing(0, path);
+      return result;
+  };
+  ```
+
+* 
 
 ### 3. 组合总和
 
@@ -1603,9 +2238,50 @@ var findSubsequences = function(nums) {
     backTracing(0);
     return result;
 };
+
+
+
+/***
+ * 递增子序列就是求子集，但是要求长度至少为2
+ * 有重复元素，同层不能出现相同元素，但是不能对数组排列，需要使用标记，使用map
+ * 同层出现了重复元素就不再比较，但是同树枝出现重复元素，还是要比较的。
+ * 这里需要判断同层是否出现相同元素，如果同层出现了相同元素，那么就不比较。
+ * 如何判断同层出现相同元素，设置map，在for循环的外面，对map进行赋初值，遍历到元素的时候，对map进行标志
+ * 那么等到了同层的相同元素的时候，就可以判断map的标志从而得出是否在同层使用过
+  */
+var findSubsequences = function(nums) {
+    let result = [];
+    let path = [];
+
+    let backTracing = function(startIndex) {
+        if(path.length > 1 ) {
+            result.push([...path]);
+        }
+
+        let map = new Map();
+        for(let i = 0; i < nums.length; i++) {
+            map.set(nums[i], false);//注意map的位置
+        }
+
+        for(let i = startIndex; i < nums.length; i++) {
+            if(map.get(nums[i])) continue;//说明使用过
+            if(path.length >= 1 && nums[i] < path[path.length - 1]) continue;
+
+            path.push(nums[i]);
+            map.set(nums[i], true);
+            backTracing(i+ 1);
+            path.pop();//注意这里没有把map置为false哦，因为是同层
+        }
+    }
+    backTracing(0);
+    return result;
+};
 ```
 
 ### 排列
+
+* **排列问题虽然位置不同是不同的答案，但是要求元素不能重复使用。所以要使用used数组**
+* used数组除了可以用于判断是否出现重复元素（树枝），也可以用于当nums有重复元素时，树层上去重
 
 ### 8. 全排列
 
@@ -1717,6 +2393,23 @@ var permuteUnique = function(nums) {
   }
   return dp[n];
   ```
+
+### 爬楼梯
+
+```js
+ /**
+ * dp[i] = Math.min(dp[i-1] + cost[i-1] , dp[i-2] + cost[i-2])
+ dp[0] = 0
+ dp[1] = 0;
+  */
+var minCostClimbingStairs = function(cost) {
+    let dp = new Array(cost.length + 1).fill(0);
+    for(let i = 2; i <cost.length + 1; i++) {
+        dp[i] = Math.min(dp[i-1] + cost[i-1] , dp[i-2] + cost[i-2]);
+    }
+    return dp[cost.length];
+};
+```
 
 ### 2. 整数拆分
 
@@ -1860,6 +2553,14 @@ var permuteUnique = function(nums) {
 * 那么最后sum-dp[sum/2]-dp[sum/2]就是最后石头的最小重量
 
 ```javascript
+ /**
+ * 思路很巧妙，因为当把石头堆分成两堆后，两堆之间的差异就是最后的石头重量
+ * 那么目的要使两堆差异尽可能小。那么理想情况是，两堆的和均为sum的一般，那么正好抵消
+ * 但有可能出现一堆的和在sum附近。那么目标就是使得当承重为sum/2的时候，dp[sum/2]尽可能的大，
+ * 就是石头的重量尽可能的大。dp[sum/2]表示石头的重量
+ * dp[j] = dp[j], dp[j- stones[i]] + stones[i]
+ * 初始情况dp为0
+  */
 var lastStoneWeightII = function(stones) {
     var sum = 0;
     for(var i = 0; i < stones.length; i++) {
@@ -1914,6 +2615,30 @@ var findTargetSumWays = function(nums, target) {
         }
     }
     return dp[x];
+};
+```
+
+### 不同的二叉搜索树
+
+```js
+ /**
+ * dp[3]:3个节点组成的二叉搜索树的个数
+ * dp[3] = 以1为头节点时搜索树的数量即为,右子树有2个节点的二叉树数目* 左子树有零个节点的二叉树的数目。即dp[2] * dp[0](这里dp[0] = 1)
+ * 以2为头节点时的搜索树的数量，即为左子树有一个，右子树有一个。dp[1] * dp[1]
+ * 以3为头节点的数据，即左子树有两个节点* 右子树有零个节点dp[2] * dp[0]
+
+ * 那么递推公式dp[i] = dp[j] * dp[i-j - 1]。这里是i-j-
+  */
+var numTrees = function(n) {
+    let dp = new Array(n+ 1).fill(0);
+    dp[0] = 1;
+    dp[1] = 1;
+    for(let i = 2; i <= n; i++) {
+        for(let j =0; j < i; j++ ) {
+            dp[i] += dp[j] * dp[i-j-1];
+        }
+    }
+    return dp[n];
 };
 ```
 
@@ -2194,6 +2919,7 @@ var rob = function(nums) {
 
 * 该题只买入一次，卖出一次。不重复购买
 * 使用二维数组，表示第i天持有股票和不持有股票的最多现金
+* 注意状态的表示，每个节点即可持有股票，也可不持有股票
 
 ```javascript
 /**
@@ -2224,6 +2950,26 @@ var maxProfit = function(prices) {
     }
     return dp[prices.length - 1][1];
 };
+
+//另一种解法
+/**
+ * dp[j]表示第j天卖出得到的利润
+ * 遍历j之前的每一天，找到prices[j] - prices[i]的最大值
+  */
+var maxProfit = function(prices) {
+    let result = 0;
+    let minIndex = 0;
+    let dp = new Array(prices.length).fill(0);
+    for(let j = 1; j < prices.length; j++) {
+        if(prices[j] < prices[minIndex]) {
+            minIndex = j;
+        }
+        dp[j] = Math.max(0, prices[j] - prices[minIndex]);
+        
+        result = Math.max(result, dp[j]);
+    }
+    return result;
+};
 ```
 
 ### 14. 买卖股票最佳时机2
@@ -2253,6 +2999,10 @@ var maxProfit = function(prices) {
 
 ```javascript
 /**
+ * 股票问题，状态的列举
+ * 最多交易2次m,每天的状态有四种，分别为第1次持有股票，第1次不持有股票，第2次持有股票。第2次不持有股票
+ * dp数组就是对状态的列举，dp数组为二维dp[i][j]，表示第i天的情况，但是j的取值有四种
+
  * 本题做多只能买卖两次。全程用户可能没有买卖、买卖一次、买卖两次
  * 与前几题的差别在于，在第i天，用户的状态不再是持有股票和不持有股票之分，两种状态了
  * 而是在第i天，有4中状态：
@@ -2677,6 +3427,12 @@ var minDistance = function(word1, word2) {
 
 
 ### 回文子串
+
+* 注意子串和子序列的不同点，一个连续一个不连续，最终递推表达式有所不同
+
+  > 若i + 1 < j，则判断dp[i][j]是否为回文子串，等于判断dp[i + 1] [j - 1]是否为回文子串
+  >
+  > 如果不等的话，分别判断`i`和`j`的加入对序列有没有影响 则`dp[i] [j] = max(dp[i] [j-1], dp[i+1] [j])`
 
 * 给定一个字符串，计算这个字符串中有多少回文子串
 
@@ -3133,6 +3889,32 @@ var findMinArrowShots = function(points) {
 
 * 本题和弓箭那一个基本一样，弓箭是求不相交区间的个数，而本题是求重叠区间的个数。（用区间总数减去弓箭数量就是本题的答案）
 * 也可以直接求要删除的区间数量，按顺序排列，遇到重叠的就移除
+* **思考：**本题和弓箭范围题一样，思考方式都是考虑当前区间的范围，通过判断范围来确定下一步的操作
+
+```js
+/**
+  * 只要出现重叠的情况，一定是要有区间要移开的
+  * 一个区间的end，表示该end的范围内，不可以出现第二个区间，就是要移除区间
+  * 要移的区间是区间范围比当前范围大的区间，选end最大的而移动，因为end越大，它覆盖的范围越广
+  * 移掉end范围大的，能够达到局部最优
+  * 只要下一个区间的start小于当前的end，那么移动数量加一，，同时更新end的值
+  * end取两个区间end的最大值
+  */
+var eraseOverlapIntervals = function(intervals) {
+    let result = 0;
+    intervals.sort((a, b) => a[0] - b[0]);
+    let end = intervals[0][1];
+    for(let i = 1; i < intervals.length; i++) {
+        if(intervals[i][0] < end) {//有重叠,result++,更新end的范围
+            result++;
+            end = Math.min(intervals[i][1], end);
+        }else {//无重叠，不需要移除区间，更新end的范围
+            end = intervals[i][1];
+        }
+    }
+    return result;
+};
+```
 
 ```javascript
 /**
@@ -3160,6 +3942,23 @@ var eraseOverlapIntervals = function(intervals) {
 ```
 
 ### 13. 合并区间
+
+```js
+var merge = function(intervals) {
+    let result = [];
+    if(intervals.length === 0) return result;
+    intervals.sort((a, b) => a[0] - b[0]);
+    result.push(intervals[0]);
+    for(let i = 1; i < intervals.length; i++) {
+        if(intervals[i][0] <= result[result.length - 1][1]) {//有重叠，更新result中的数据
+            result[result.length - 1][1] = Math.max(intervals[i][1], result[result.length - 1][1]);
+        }else {//无重叠，直接加入result
+            result.push(intervals[i]);
+        }
+    }
+    return result;
+};
+```
 
 ```javascript
 var merge = function(intervals) {
@@ -3245,6 +4044,65 @@ var minCameraCover = function(root) {
     if(myMin(root) == 0) result++;//还需判断根节点的状态，如果没有覆盖，则result++
     return result;
 };
+```
+
+## 主持人调度问题
+
+```js
+/**
+ * 只要有重叠区间，就需要增加一个主持人，没有重叠就不加，
+ * 和力扣上，删除最少区间，得到无重叠区间的个数这道题一样
+ * 更新end的时候取最小的
+ * 当有重叠的时候，不是单纯的就增加一个主持人，需要判断以往增加的主持人的end有没有当前区间的start的，如果有的话，就不用增加主持人，同时更新该主持人的end
+ */
+function minmumNumberOfHost( n ,  startEnd ) {
+    // write code here
+    // startEnd.sort((a, b) => a[0] - b[0]);
+    // let result = [];
+    // result.push(startEnd[0][1]);
+    // let end = startEnd[0][1];
+    // for(let i = 1; i < startEnd.length; i++) {
+    //     if(startEnd[i][0] < end) {//有重叠
+    //         let item = result.filter((item, index, arr) => {
+    //             return item <= startEnd[i][0];
+    //         })
+    //         let index = item.map((nums) => result.indexOf(nums));
+    //         if(index.length !== 0) {
+    //             result[index[0]] = startEnd[i][1];
+    //         }else {//需要增加主持人
+                
+    //             end = Math.min(end, startEnd[i][1]);
+    //             result.push(end);
+    //         }
+            
+            
+    //     }else {//无重叠
+    //         end = startEnd[i][1];
+    //         result[result.length - 1] = end;
+    //     }
+    // }
+    // return result.length;
+
+    //不知道怎么写的，把开始时间和结束时间分开排序，判断下一个区间的开始时间和上一个区间的结束时间
+    let start = new Array(startEnd.length);
+    let end = new Array(startEnd.length);
+    for(let i = 0; i < n; i++) {
+        start[i] = startEnd[i][0];
+        end[i] = startEnd[i][1];
+    }
+    start.sort((a, b) => a - b);
+    end.sort((a, b) => a - b);
+    let j = 0;
+    let result = 0;
+    for(let i = 0; i < n; i++) {
+        if(start[i] >= end[j]) {
+            j++;
+        }else {
+            result++;
+        }
+    }
+    return result;
+}
 ```
 
 
@@ -3386,6 +4244,88 @@ var sortArray = function(nums) {
 };
 ```
 
+## 岛屿问题
+
+### 1. 求联通数
+
+* 米哈游的笔试题，盲人视角，B和G是相同的
+
+```js
+ /*2. 可以在深度遍历的时候，传入当前的color，只要遍历的color等于当前的color,那么继续遍历，
+ *  遍历的终止条件：1.数组索引越界。 2.当前节点标记过  3.当前节点不等于curcolor
+ * 如果当前节点等于curcolor，才进行下一步的递归操作
+ */
+let myfun = function(arr, n , m) {
+    let DFS = function (dfsArr, i, j, curcolor) {
+        if (i < 0 || i >= n || j < 0 || j >= m) {
+            return;
+        } else if (dfsArr[i][j] === curcolor) {//等于当前颜色，才进行递归搜索
+            dfsArr[i][j] = "-1";//标记
+            DFS(dfsArr, i + 1, j, curcolor);
+            DFS(dfsArr, i - 1, j, curcolor);
+            DFS(dfsArr, i, j + 1, curcolor);
+            DFS(dfsArr, i, j + 1, curcolor);
+        }
+    }
+    let BGRcount = 0, BGcount = 0;
+    let BGArr = arr.map((row) => row.map((v) => v === "G" ? "B" : v));
+
+    //求联通数
+    for(let i = 0; i < n; i++) {
+        for(let j = 0; j < m; j++) {
+            if(arr[i][j] !== "-1") {//只要没有被标记，就深度优先搜索，联通数就加1
+                DFS(arr, i, j, arr[i][j]);
+                BGRcount++;
+            }
+            if (BGArr[i][j] !== "-1") {
+                DFS(BGArr, i, j, BGArr[i][j]);
+                BGcount++;
+            }
+        }
+    }
+    return BGRcount - BGcount;
+}
+
+let arr = [["R", "R", "G", "G", "B", "B"], ["R", "G", "B", "G", "R", "R"]]
+console.log(myfun(arr,2,6));
+```
+
+### 2. 岛屿的周长
+
+```js
+/**
+ * 神奇的问题：深度优先遍历，上下左右四个地方都会访问。当深度遍历停止的时候，也就是分两种情况
+ * 一是因为超出网格边界，遇到黄色的边，这种情况，周长+1
+ * 二是因为遇到已标记过的点，中间的，周长不变，返回0
+ * 三是grid为0，遇到海洋，这就是蓝色的边，周长+1
+*/
+var islandPerimeter = function(grid) {
+    let result = 0;
+    let dfs = function(i, j) {
+        if(i < 0 || i >= grid.length || j < 0 || j >= grid[0].length) {
+            return 1;//超范围，黄色边
+        }
+        if(grid[i][j] === 0) {//海洋，蓝色的边
+            return 1;
+        }
+        if(grid[i][j] === 2) {//已标记过，无边
+            return 0;
+        }
+        grid[i][j] = 2;
+        return dfs(i + 1, j) + dfs(i - 1, j) + dfs(i, j-1) + dfs(i, j+1);//返回周长
+    }
+
+    for(let i = 0; i < grid.length; i++) {
+        for(let j = 0; j < grid[0].length; j++) {
+            if(grid[i][j] === 1) {
+                result += dfs(i,j);
+            }
+        }
+    }
+    return result;
+};
+```
+
 
 
 
@@ -3464,6 +4404,46 @@ function reverseBetween( head ,  m ,  n ) {
 
 }
 ```
+
+## 牛客网
+
+### 1. 大数加法
+
+* 使用栈，从后往前逐个数字相加，注意进位
+
+```js
+function solve( s ,  t ) {
+    // write code here
+    let stack = [];
+    let i = s.length -1, j = t.length - 1;
+    let jin = 0;
+    let a, b;
+    while(i >= 0 || j >= 0) {
+        if(i <= -1) a = 0;
+        else a =  parseInt(s[i]);
+        if(j <= -1) b = 0;
+        else b = parseInt(t[j]);
+        let add = a + b + jin;
+        jin = 0;
+        if(add > 9) {
+            jin = Math.floor(add/10);
+            stack.push(Math.floor(add%10));
+        } else {
+            stack.push(add);
+        }
+        i--;
+        j--;
+    }
+    if(jin !== 0) stack.push(jin);
+    return stack.reverse().join("");
+}
+```
+
+
+
+
+
+
 
 ## 分割线
 
