@@ -113,10 +113,7 @@ const config = {
               text: "LeetCode",
               link: "/algorithm/leetcode"
             },
-            {
-              text: "手写js",
-              link: "/algorithm/手写js"
-            }
+            
           ],
         },
       ],
