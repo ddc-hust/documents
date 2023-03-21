@@ -27,6 +27,14 @@ const config = {
         link: "/algorithm/leetcode",
       },
       {
+        text: "手写题",
+        link: "/手写题",
+      },
+      {
+        text: "大杂烩",
+        link: "/大杂烩-前端学习笔记",
+      },
+      {
         text: "文章",
         link: "/blog/actions",
       },
@@ -112,6 +120,7 @@ const config = {
           ],
         },
       ],
+      
       "/blog/": [
         {
           isGroup: true,
