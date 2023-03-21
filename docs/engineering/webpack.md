@@ -332,7 +332,7 @@ module.exports = {
 };
 ```
 
-在以上配置中，contentBase 指定了服务器提供内容的根目录为 dist 文件夹，port 指定了 DevServer 监听的端口号为 9000，hot 启用了热更新功能，proxy 设置了一个代理，将以 /api 开头的请求转发到 [http://localhost:3000，historyApiFallback](http://localhost:3000，historyApiFallback/) 启用了 HTML5 History API。
+在以上配置中，contentBase 指定了服务器提供内容的根目录为 dist 文件夹，port 指定了 DevServer 监听的端口号为 9000，hot 启用了热更新功能，proxy 设置了一个代理，将以 /api 开头的请求转发到 `[http://localhost:3000，historyApiFallback](http://localhost:3000，historyApiFallback/) `启用了 HTML5 History API。
 
 可以使用 `npm run serve` 命令启动 DevServer，也可以在配置文件中添加以下代码：
 
