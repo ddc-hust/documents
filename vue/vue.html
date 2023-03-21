@@ -6,8 +6,8 @@
     <title>Vue-router | 叮咚澈的快乐学习时光</title>
     <meta name="description" content=" ">
     <link rel="stylesheet" href="/documents/assets/style.948f2fd7.css">
-    <link rel="modulepreload" href="/documents/assets/app.c889437a.js">
-    <link rel="modulepreload" href="/documents/assets/vue_vue.md.ece71c06.lean.js">
+    <link rel="modulepreload" href="/documents/assets/app.8e4af7d4.js">
+    <link rel="modulepreload" href="/documents/assets/vue_vue.md.7277968d.lean.js">
     
     <link rel="icon" type="image/png" href="pure-logo.svg">
   <script>(()=>{const e=localStorage.getItem("vitepress-theme-appearance"),a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
@@ -75,8 +75,8 @@
 <span class="line"><span style="color:#F07178;">    </span><span style="color:#89DDFF;">}</span></span>
 <span class="line"><span style="color:#89DDFF;">}</span></span>
 <span class="line"></span></code></pre></div><h2 id="_15-mvvm模型" tabindex="-1">15. MVVM模型 <a class="header-anchor" href="#_15-mvvm模型" aria-hidden="true">#</a></h2><ul><li><code>model</code>：数据模型； <code>view</code>：用户界面； <code>viewModel</code>：连接<code>view</code>和<code>model</code>的桥梁</li><li>viewModel监听view中的用户操作，根据用户操作来更新数据模型，并更新页面显示（监听 View 中的用户操作，并更新 Model 中的数据，同时也监听 Model 中数据的变化，然后更新 View 中的显示。）</li><li>这样就可以做到数据的双向绑定，使得数据和界面保持同步</li><li>vue中modelview是vue实例，model是vue实例的data选项，view是html模板（双向数据绑定）</li></ul><h2 id="_16-双向绑定原理" tabindex="-1">16. 双向绑定原理 <a class="header-anchor" href="#_16-双向绑定原理" aria-hidden="true">#</a></h2><ul><li>使用数据劫持和发布-订阅的模式实现。vue.js会对数据对象进行依赖遍历，将每个属性转换成getter和setter。并在每个属性上添加一个依赖收集器。（依赖收集器记录所有的依赖关系，当一个属性发生变化是时，所有依赖该属性的地方都会被通知）</li><li>在模板编译阶段，解析模板指令，并在数据对象上添加一个监听器，用于监听表达式的值。当表达式的值发生改变的时候，监听器会通知依赖收集器，依赖收集器会通知所有依赖该属性的地方，从而完成更新视图，双向绑定</li><li></li></ul></div></div></main><footer class="VPDocFooter" data-v-79ca2460 data-v-04568844><div class="edit-info" data-v-04568844><!----><div class="last-updated" data-v-04568844><p class="VPLastUpdated" data-v-04568844 data-v-0ce8c960>Last updated: <time datatime="2023-03-21T06:07:18.000Z" data-v-0ce8c960></time></p></div></div><!----></footer><!--[--><!--]--></div></div></div></div></div><!----><!--[--><!--]--></div></div>
-    <script>__VP_HASH_MAP__ = JSON.parse("{\"algorithm_leetcode.md\":\"c9ab75ac\",\"algorithm_输入输出.md\":\"eb4c6acc\",\"blog_actions.md\":\"89f14d2b\",\"engineering_gulp.md\":\"bc8258dc\",\"engineering_webpack.md\":\"02ef70c5\",\"frontend_readme.md\":\"c0df3a87\",\"frontend_browser.md\":\"c9b0b39f\",\"frontend_css.md\":\"2ca9e232\",\"frontend_http.md\":\"0a3069f8\",\"frontend_javascript.md\":\"85c2e987\",\"frontend_less.md\":\"5754a185\",\"frontend_nodejs.md\":\"4ebd126b\",\"index.md\":\"870b8863\",\"me_index.md\":\"834c2ee8\",\"react_readme.md\":\"9563b0b1\",\"vue_vue.md\":\"ece71c06\",\"大杂烩-前端学习笔记.md\":\"bf63b959\",\"手写题.md\":\"9d154190\",\"面经.md\":\"c287308f\",\"面试题.md\":\"f9530f19\"}")</script>
-    <script type="module" async src="/documents/assets/app.c889437a.js"></script>
+    <script>__VP_HASH_MAP__ = JSON.parse("{\"algorithm_leetcode.md\":\"7faa2395\",\"algorithm_输入输出.md\":\"5e07cfa5\",\"blog_actions.md\":\"c475d860\",\"engineering_gulp.md\":\"f14d8e15\",\"engineering_webpack.md\":\"69903860\",\"frontend_readme.md\":\"2d5cf28e\",\"frontend_browser.md\":\"b3e0348f\",\"frontend_css.md\":\"2c36774d\",\"frontend_http.md\":\"0556cff6\",\"frontend_javascript.md\":\"7fd0c3b7\",\"frontend_less.md\":\"48479100\",\"frontend_nodejs.md\":\"9a3e3dec\",\"index.md\":\"9cba71d4\",\"me_index.md\":\"cfb3c97e\",\"react_readme.md\":\"ccf9e5df\",\"vue_vue.md\":\"7277968d\",\"大杂烩-前端学习笔记.md\":\"8767d334\",\"手写题.md\":\"79194ebb\",\"面经.md\":\"fc78755f\",\"面试题.md\":\"8741a336\"}")</script>
+    <script type="module" async src="/documents/assets/app.8e4af7d4.js"></script>
     
   </body>
 </html>
