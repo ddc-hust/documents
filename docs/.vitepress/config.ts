@@ -20,7 +20,11 @@ const config = {
       {
         text: "Vue",
         link: "/vue/vue",
-       
+
+      }, {
+        text: "React",
+        link: "/react/README",
+
       },
       {
         text: "算法",
@@ -69,7 +73,7 @@ const config = {
               text: "http",
               link: "/frontend/http",
             },
-            
+
             {
               text: "浏览器",
               link: "/frontend/browser",
@@ -78,8 +82,8 @@ const config = {
               text: "node",
               link: "/frontend/nodejs",
             },
-            
-            
+
+
           ],
         },
       ],
@@ -113,11 +117,11 @@ const config = {
               text: "LeetCode",
               link: "/algorithm/leetcode"
             },
-            
+
           ],
         },
       ],
-      
+
       "/blog/": [
         {
           isGroup: true,
