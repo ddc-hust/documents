@@ -283,33 +283,26 @@
    <head>
        <meta charset="UTF-8">
        <title>三栏布局</title>
-       <!--使用flex，left使用flex-start,right使用flex-end。中间flex-grow即可占满一行-->
+       <!--使用flex，左右固定宽度，中间使用width100%或者使用flex1都可以自适应宽度-->
        <style>
            .container {
+               height: 100vh;
+               overflow-y: hidden;
                display: flex;
-               height: 200px;
            }
-   
            .left {
-               justify-content: flex-start;
-               width: 100px;
-               height: 100%;
-               background-color: aquamarine;
+               background-color: antiquewhite;
+               width: 200px;
            }
-   
-           .middle {
-               background-color:black;
-               height: 100%;
-               flex-grow: 1;
-           }
-   
            .right {
-               justify-content: flex-end;
+               background-color:aqua;
+               width: 200px;
    
-               background-color: blueviolet;
-               width: 100px;
-               height: 100%;
-               overflow: auto;
+           }
+           .middle {
+               background-color: rgb(81, 217, 97);
+               width: 100%;
+               margin: 0 20px;
            }
        </style>
    </head>
@@ -322,6 +315,8 @@
            
        </div>
    </body>
+   
+   </html>
    ```
 
    
@@ -349,3 +344,7 @@
 * `flex-shrink：1`：当子容器的大小大于父容器的大小时，吸收超出的空间
 * `flex-basis`：0%：用来设置盒子的基准宽度，并且basis和width同时存在basis会把width干掉
 
+* `justify-content`属性是用于设置项目在容器中的对齐方式，是对子元素有效， 而不是对本身有效
+  * `flex-start`规定子元素从左往右排列，左对齐
+  * `flex-end`规定子元素右对齐
+    * 注意，flex-start和flex-end不是规定元素的排列位置

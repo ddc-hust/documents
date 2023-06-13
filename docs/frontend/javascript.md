@@ -86,12 +86,19 @@
 
 ## 2. 防抖和节流
 
+* 防抖和节流可以避免频繁触发事件导致页面性能下降
+
 * 防抖（debounce）：防止单位事件内，事件触发多次。
 
   * 代码实现重在重新计时。
   * 业务场景：比如用户重复点击登录按钮，使用防抖，可减少发送登录请求的次数
+  * 类似于回城，防抖的原理是只执行最后一次操作，当第一次执行操作后，会判断在delay秒中有没有再次触发，如果有再次触发的话，就会重新计时。所以代码中存在clearTimeOut（time）
+  * 应用输入框，用户会持续输入，只有当在一段时间内，没有重复输入后，才将结果发送。
 
   ```javascript
+  /**
+  * 这里的setTimeout()函数返回是一个数字，代表定时器的id。可以使用clearTimeout(id)来取消定时器
+  */
   function debounce(fn, wait) {
     let timer;
     return function () {
@@ -105,13 +112,30 @@
       }, wait);
     };
   
+      function debounce(fun, delay) {
+          let time = null;
+          return function() {
+              let that = this;
+              let args = arguments;//每一个函数都有一个arguments对象，类数组对象，收集函数的参数，即使（）中没有写
+              if(time) {
+                  clearTimeout(time);
+              }
+              time = setTimeout(function() {
+                  fun.apply(that,args);//这里是匿名函数，匿名函数中的this指向由调用它的对象所决定。setTimeout函数是全局的，this指向window对象。为了使用fun本来的this指向，所以需要借助that。如果是箭头函数，箭头函数的this是由定义箭头函数时的作用域所决定的。
+              }, delay);
+          }
+      }
+      
   ```
 
-* 节流（throttle）：限制单位事件内事件触发的频率。在单位事件内，事件只能触发一次。
+* 节流（throttle）：限制单位时间内事件触发的频率。在单位事件内，事件只能触发一次。
 
   * 代码实现重在开锁和关锁
   * 比如scroll事件，每隔一秒计算一次位置信息
-
+  * 节流：当事件被触发时，函数会立即执行一次，然后在一段时间内（如100ms）内忽略后续的事件触发，直到该时间段过去后再重新执行。
+  * 类似于技能CD，在一定间隔时间内只能执行一次，设置定时器，完成操作后，定时器才会置空。代码中需要判断当定时器为空的时候，才能执行操作。否则不做任何操作。
+  * 应用在页面滚动中，当页面滚动到底部时，会触发操作，进行加载页面。为避免一直发送请求加载，在一定时间间隔内只会加载一次。
+  
   ```javascript
   function thorttle2(fn, wait) {
     let timer;
@@ -127,6 +151,21 @@
       }
     };
   }
+  
+  function throttle(fun, delay) {
+      let time = null;
+      return function() {
+          let that = this;
+          let args = arguments;
+          if(!time) {//time为空，可以执行操作
+              time = setTimeout(() => {
+                  fun.apply(that, args);
+                  time = null;//操作执行完成之后，重新计时
+              }, delay);
+              
+          }
+      }
+  }
   ```
 
 
@@ -140,7 +179,7 @@
 * **闭包：**在一个函数内部再定义一个函数，内层函数可以使用外层函数的变量
   * 当外层函数执行完词法环境销毁之后，由于内层函数可以包含对外层函数词法环境的引用，所以即使创建时所在的执行上下文被销毁，但是词法环境依然存在。从而延长变量的生命周期
   * **作用：**1. 创建私有变量。2. 延长变量的生命周期
-  * **缺点**： **a**、会增加对内存的使用量，影响性能。    **b**、不正确的使用闭包会造成内存泄漏。
+  * **缺点**： **a**、会增加对内存的使用量，影响性能。    **b**、不正确的使用闭包会造成内存泄漏。（内存泄漏：由于某些原因导致程序申请的内存无法被及时释放，从而导致内存占用持续上升）
 * **作用域**：决定了代码区块中变量和其它区块的可见性。分为全局作用域、函数作用域、块级作用域
   * 全局作用域：全局作用域下声明的变量可以在程序的任意位置访问
   * 函数作用域：如果一个变量是在函数内部声明的它就在一个函数作用域下面。这些变量只能在函数内部访问，不能在函数以外去访问
@@ -402,6 +441,51 @@ queueMicrotask(() => {
 console.log("script sync part end");
 ```
 
+```js
+Function.prototype.myCall = function () {
+  const [context, ...args] = [...arguments];
+  // 在传入的对象上设置属性为待执行函数
+  context.fn = this;
+  // 执行函数 并获取其返回值
+  const res = context.fn(...args);
+  // 删除属性
+  delete context.fn;
+  // 返回执行结果
+  return res;
+}
+
+const obj = {
+  value: '我是obj.value',
+}
+
+function fn(canshu1,canshu2,canshu3) {
+  console.log(this.value);  // 我是obj.value
+  return [canshu1,canshu2,canshu3]
+}
+
+const xxx = fn.myCall(obj, 2,3,4);
+console.log(xxx) // [2,3,4]
+
+Function.prototye.myCall = function() {
+    const [context, ...args] = [...arguments];
+    context.fn = this;
+    let res = context.fn(...args);
+    delete context.fn;
+    return res;
+}
+Function.prototype.myapply = function(context, args) {
+    context.fn = this;
+    //如果参数不存在
+    let res = !args ? context.fn() : context.fn(...args);
+    delete context.fn;
+    return es;
+}
+fn.mycall(obj, 2,3,4);
+fn.myapply(obj, [2,3,4]);
+```
+
+
+
 ## 11. `typeof`和`instanceof`
 
 1. typeof：可以判断基础数据类型，对于引用数据类型返回的是object，对于函数返回的是function（无法细分引用数据类型），对于`typeof null`返回的是`Object`
@@ -480,7 +564,104 @@ console.log("script sync part end");
   * resolve()
   * reject()
   * try()
-  * 
+  
+* **Promise抛出错误**
+
+  * 在promise中返回任意一个非promise对象都会被包裹成promise对象，比如下面的例子中return的是一个error对象，那么就会被包裹成 `return Promise.resolve(new Error('error!!'))`，所以promise的then返回的promise实例变成了fulfilled状态，而不是rejected状态。所以下面函数的执行结果是`then Error:error`
+  * `.then`或者`.catch`中`return`一个`error`对象并不会抛出错误，所以是不会被`catch`捕捉到的
+
+  ```js
+  Promise.resolve().then(() => {
+    return new Error('error!!!')
+  }).then(res => {
+    console.log("then: ", res)
+  }).catch(err => {
+    console.log("catch: ", err)
+  })
+  ```
+
+* 如果想要抛出错误可以采用：
+
+  ```js
+  return Promise.reject(new Error('error!!!'));
+  // or
+  throw new Error('error!!!')
+  ```
+
+* **值穿透**
+
+  * 在链式调用`.then`或者`.catch`中，参数期望是函数，如果传入非函数，会发生值穿透。值穿透是指传入的非函数值将会被忽略，传入的是之前的函数参数。
+
+  ```js
+  Promise.resolve(1)
+    .then(2)
+    .then(Promise.resolve(3))
+    .then(console.log)
+  //输出结果：1。第1个then和第2个then中的参数，一个是数字，一个是对象，都没有用。
+  ```
+
+* **finally**
+
+  * `finally`不同于`.then`和`.catch`，`finally`最终返回的是上一次的`promise`对象值。不过如果抛出的是一个异常对象，则返回异常的`promise`对象。
+
+  ```js
+  Promise.resolve('1')
+    .then(res => {
+      console.log(res)
+    })
+    .finally(() => {
+      console.log('finally')
+    })
+  Promise.resolve('2')
+    .finally(() => {
+      console.log('finally2')
+    	return '我是finally2返回的值'
+    })
+    .then(res => {
+      console.log('finally2后面的then函数', res)//这里的res是2，因为finally返回的不是promise新的值，是上一次promise对象值
+    })
+  
+  输出结果：'1'
+  'finally2'
+  'finally'
+  'finally2后面的then函数' '2'
+  ```
+
+  * `finally()`会等`promise1().then()`执行完才会将`finally()`加入微任务队列
+
+* **async/await**
+
+  * await后面跟的是一个promise对象，await会阻塞后面的代码，可以堪称await后面的代码是promise.then中包裹的
+
+  ```js
+  async function async1() {
+    console.log("async1 start");
+    await async2();
+    console.log("async1 end");
+  }
+  async function async2() {
+    console.log("async2");
+  }
+  async1();
+  console.log('start')
+  
+  
+  async function async1 () {
+    console.log('async1 start');
+    await new Promise(resolve => {//这个由于await后面跟的promise一直处于pending状态，没有完成，所以后面的两行代码是不会被执行到的
+      console.log('promise1')
+    })
+    console.log('async1 success');
+    return 'async1 end'
+  }
+  console.log('srcipt start')
+  async1().then(res => console.log(res))
+  console.log('srcipt end')
+  
+  
+  ```
+
+  
 
 ## 14. `for...in...`和`for...of...`
 
@@ -869,3 +1050,11 @@ javascriptCopy codefunction Person(name, age) {
 const person = new Person('Alice', 30);
 console.log(person.constructor === Person); // true
 ```
+
+## 29. defer和async
+
+* 作用：异步加载js脚本，避免js脚本阻塞渲染的进行
+* 不同：
+  * defer的脚本会在html解析完成之后，dom树构建完成之后，执行脚本。`async`会在加载完成之后立即执行。
+  * `defer`的脚本会按照它在文档中的顺序依次执行。`async`的脚本不是按顺序执行的
+  * `defer`一般用于多个有依赖关系的脚本的加载和执行。`async`用于单个脚本的加载，或者多个脚本之间没有依赖关系

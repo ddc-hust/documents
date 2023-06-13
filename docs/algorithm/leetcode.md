@@ -168,6 +168,65 @@ Math.round(Math.random() * 36)) + 5//这里乘36是因为，Math.random不能生
 
   * 该方法分别利用二分查找方法寻找左边界和右边界
 
+### 二分查找确定左右边界
+
+* 当数组中有重复元素，查找重复元素的左边界的时候，判断的条件：`nums[mid] >= target` , 这个时候更新`right`，那么`right`就是左边界的下一个
+
+```js
+function search( nums ,  target ) {
+    // write code here
+    //中间分割点的判断条件变了，本题数组中有重复数字，那么mid就不能简单将数组分为大于和小于两部分。应该分成小于和大于等于。这样的话，最后一定
+   let left = 0, right = nums.length - 1, leftBorder = -1;
+   while(left <= right) {
+     let mid = left + Math.floor((right - left)/2);
+     if(nums[mid] >= target) {
+        leftBorder = mid-1 ;
+        right = mid - 1;
+     }else {
+        left = mid + 1;
+     }
+
+   }
+   return nums[leftBorder + 1] === target? leftBorder + 1 : -1;//注意这里最后是leftBorder+1
+}
+```
+
+```js
+var searchRange = function(nums, target) {
+    //分别查找左边界和右边界，先找左边界，最后如果左边界没找到的话，就代表没有找到该元素，返回-1，-1。否则就找有边界
+    let left = 0, right = nums.length - 1, leftBorder = -1, rightBorder = -1;
+    let result = [-1, -1];
+    while(left <= right) {
+        let mid = left + Math.floor((right - left)/2);
+        if(nums[mid] >= target) {
+            right = mid -1;
+            leftBorder = right;
+        }else {
+            left = mid + 1;
+        }
+    }
+    if(nums[leftBorder + 1] !== target) return result;
+    result[0] = leftBorder + 1;
+    left = 0;
+    right = nums.length - 1;
+    while(left <= right) {
+        let mid = left + Math.floor((right - left)/2);
+        if(nums[mid] <= target) {
+            left = mid + 1;
+            rightBorder = left;
+        }else {
+            right = mid - 1;
+        }
+    }
+    result[1] = rightBorder - 1;
+    return result;
+};
+```
+
+
+
+* 
+
 ### 2. 移除元素
 
 * 移除数组中的指定元素，需考虑数组中删除元素只能覆盖
@@ -522,6 +581,65 @@ var reverseList = function(head) {
     return preNode;
 
 };
+```
+
+### 重排链表
+
+* 方法一：借助线性表，从而获取链表之间的顺序。借助数组，把链表节点存入数组中，注意这里其实存的是引用，所以改变next的指向，就可以获得重排后的链表
+* 方法二：既然链表反向顺序我们不知道，那我们就反转链表。先找到链表中点，最后反转右半边链表，最后合并链表
+
+```js
+function reorderList( head ) {
+    // 方法一：重排链表，由于无法确定链表的顺序，所以借助其它线性表。这里借助数组，把链表节点放在数组中，这里放在数组中，是浅拷贝，然后改变指针next的指向就可以
+    let res = [];
+    let p = head;
+    if(head === null) return;
+    while(p) {
+        res.push(p);
+        p = p.next;
+    }
+    let i = 0, j = res.length - 1;
+    while(i < j) {
+        let temp = res[i].next;
+        res[i].next = res[j];
+        res[j].next = temp;
+        i++;
+        j--;
+    }
+    res[i].next = null;
+
+    //方法二：既然链表不是有序的话，那我们可以反转右半边的链表，那么首先需要找到链表的中点
+    //链表中点：可以使用快慢指针，慢指针一次走1步，快指针一次走两步。当快指针走到链表尾的时候，慢指针在重点，或者左端点
+     //采用分割链表，反转链表，最后合并链表
+    let slow = head, fast = head;
+    if(!fast || !fast.next ) return;
+    while(fast && fast.next ) { //注意这里有两个判断条件，fast存在并且fast.next存在
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    let mid = slow.next;
+    slow.next = null;//切断链表
+
+    let pre = null; //反转链表
+    let cur = mid;
+    while(cur) {
+        let temp = cur.next;
+        cur.next = pre;
+        pre = cur;
+        cur = temp;
+    }
+
+    let p = pre, q = head; //合并链表。合并链表搞清楚合并步骤的顺序，有些节点是需要事先记录下来的
+    while(p) {
+        let tempQ = q.next;
+        q.next = p;
+        let tempP = p.next;
+        p.next = tempQ;
+        q = tempQ;
+        p = tempP;
+    }
+    
+}
 ```
 
 
@@ -1519,7 +1637,7 @@ var isValidBST = function(root) {
     var maxVal = -Number.MAX_VALUE;
     var inorder = function(node) {
         if(!node) return true;
-        var left = inorder(node.left);
+        var left = inorder(node.left);//递归函数有返回值，所以需要有接盘的东西
         if(node.val <= maxVal) {
             return false;
         }else {
@@ -1927,6 +2045,74 @@ var insertIntoBST = function(root, val) {
       return root;
   };
   ```
+
+## 11.恢复二叉树
+
+* 
+
+* ```js
+  var recoverTree = function(root) {
+      //方法一：找规律，交换后的二叉搜索树的中序遍历得到的数组的顺序发生了改变。
+      //分为两种情况，第一种是有两个地方顺序不对，那么最后，交换两头的就可以。第二种情况是只有一处顺序不对，那么只需要交换这两个数就可以
+      // let arr = [];
+      // let inorder = function(node) {
+      //     if(!node) return;
+      //     inorder(node.left);
+      //     arr.push(node.val);
+      //     inorder(node.right);
+      // }
+      // inorder(root);
+      // let leftIndex = -1, rightIndex = -1;
+      // for(let i = 1; i < arr.length; i++) {
+      //     if(arr[i] < arr[i-1]) {
+      //         if(rightIndex === -1)  leftIndex = i-1
+      //         rightIndex = i;
+      //     } 
+      // }
+      // let leftValue = arr[leftIndex], rightValue = arr[rightIndex];
+      // let count  = 0;
+      // let swap = function(node) {
+      //     if(count === 2) return;
+      //     if(!node) return;
+      //     swap(node.left);
+      //     if(node.val === leftValue) {
+      //         node.val = rightValue;
+      //         count++;
+      //     }else if(node.val === rightValue) {
+      //         node.val = leftValue;
+      //         count++
+      //     }
+      //     swap(node.right);
+      // }
+      // swap(root);
+  
+  
+      //方法二：在中序遍历的过程中，可以发现顺序不对的节点，记录下顺序不对的节点，当第一次遇到顺序不对的节点的时候，可以更新x，其它时候不更新。这样交换两个节点，就不需要使用额外的空间
+      let xNode = null, yNode = null;
+      let pre = null;
+      let inorder = function(node) {
+          if(!node) return;
+          inorder(node.left);
+          if(pre && node.val <= pre.val) {
+              if(!xNode) xNode = pre;//注意更新xNode的情况
+              yNode = node;
+          }
+          pre = node;
+          inorder(node.right);
+      }
+      inorder(root);
+  
+          let temp = xNode.val;
+          xNode.val = yNode.val;
+          yNode.val = temp;
+      
+      
+  };
+  ```
+
+* 
+
+
 
 ### 总结
 
@@ -3430,19 +3616,19 @@ var minDistance = function(word1, word2) {
 
 * 注意子串和子序列的不同点，一个连续一个不连续，最终递推表达式有所不同
 
-  > 若i + 1 < j，则判断dp[i][j]是否为回文子串，等于判断dp[i + 1] [j - 1]是否为回文子串
+  > 若`i + 1 < j`，则判断`dp[i][j]`是否为回文子串，等于判断`dp[i + 1] [j - 1]`是否为回文子串
   >
   > 如果不等的话，分别判断`i`和`j`的加入对序列有没有影响 则`dp[i] [j] = max(dp[i] [j-1], dp[i+1] [j])`
 
 * 给定一个字符串，计算这个字符串中有多少回文子串
 
-* 动态规划：dp数组，`dp[i][j]`:表示区间`i`到`j`是否为回文子串(左闭右闭区间)
+* 动态规划：`dp`数组，`dp[i][j]`:表示区间`i`到`j`是否为回文子串(左闭右闭区间)
 
   * 递推公式：
-    *  判断s[i]是否等于s[j]。如果相等：
-       *  若i == j, 则是回文子串
-       *  若i + 1 == j, 则是回文子串
-       *  若i + 1 < j，则判断dp[i][j]是否为回文子串，等于判断dp[i + 1] [j - 1]是否为回文子串
+    *  判断`s[i]`是否等于`s[j]`。如果相等：
+       *  若`i == j`, 则是回文子串
+       *  若`i + 1 == j`, 则是回文子串
+       *  若`i + 1 < j`，则判断`dp[i][j]`是否为回文子串，等于判断dp[i + 1] [j - 1]是否为回文子串
   * 注意点：需要从下往上，从左往右计算，
 
 * 中心扩散：找中心，往两边扩散判断是否对称
@@ -4166,7 +4352,7 @@ var sortArray = function(nums) {
             while(left <= right && nums[right] > nums[mid]) {
                 right--;
             }
-            if(left <= right) {
+            if(left <= right) {//只有在left小于right的时候才交换
                 let temp = nums[right];
                 nums[right] = nums[left];
                 nums[left] = temp;
@@ -4326,7 +4512,59 @@ var islandPerimeter = function(grid) {
 };
 ```
 
+## 位运算
 
+* 取反运算符：`~`， 异或运算符： `^`, 左移数翻倍：`<<`,  右移数减半： `>>`
+
+### 1. 只出现一次的数字
+
+* 恰好只有一个元素出现一次
+
+* 位运算。相同的两个数按位异或得到的是0，0和任何数异或得到的是它本身。那么所有的数异或后得到的结果一定是最终的只出现一次的元素
+
+* ```js
+  var singleNumber = function(nums) {
+      //方法二：位运算。相同的两个数按位异或得到的是0，0和任何数异或得到的是它本身。那么所有的数异或后得到的结果一定是最终的只出现一次的元素
+      let result = 0;
+      for(let i = 0; i < nums.length; i++) {
+          result ^= nums[i];
+      }
+      return result;
+  
+  };
+
+### 2. 只出现一次的两个数字
+
+* 恰好只有两个元素只出现一次
+* 位运算：所有的数异或之后，可以得到`a`和`b`的异或结果，由于a和b不相等，所以异或结果不为0，那么异或结果一定有1。那么a和b一定有一位，一个取1，一个取0。按照这个不同位，将原数分为两个集合。一类是该位取1，一类是该位取0。那么这两个集合中，各自异或的最终结果就是a和b的值
+* 
+
+## 进制转换
+
+* js中，把其它进制转换成10进制：`parseInt(num, 8), parseInt(num, 2), parseInt(num, 16)`，第二个参数表示该数本身的进制数
+* 把10进制转换成其它进制：`num.toString(2), num.toString(8), num.toString(16)`
+
+## 差分&前缀和
+
+```js
+ /**
+ * 思考：在重叠区间内，所有的重叠区间的人数加起来小于等于capcacity，就返回true.
+ * 需要考虑每个站点的人数，使用差分数组，差分数组的前缀和就是每个站点的人数。同时对差分数组进行区间加和区间减的操作就可以处理每个区间
+  */
+var carPooling = function(trips, capacity) {
+    let nums = new Array(1002).fill(0);//注意差分数组的长度
+    for(let i = 0; i < trips.length; i++) {
+        nums[trips[i][1]] += trips[i][0];
+        nums[trips[i][2] ] -= trips[i][0];
+    }
+   if(nums[0] > capacity) return false;//差分数组的前缀和就是容量
+    for(let i = 1; i < nums.length; i++) {  //这里从索引1开始比较，所以需要额外判断nums[0]和capacity的代销
+        nums[i] += nums[i-1];
+        if(nums[i] > capacity) return false;
+    }
+    return true;
+};
+```
 
 
 
