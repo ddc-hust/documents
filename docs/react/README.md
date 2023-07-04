@@ -8,6 +8,20 @@
 
 * 单一职责原则：每个组件只做一件事； 如果组件负责，可拆分成小组件
 * DRY原则：组件尽量无状态，所需数据通过props获取
+* react定义组件可以使用函数定义，也可以使用ES6 Class定义组件。（注意组件名首字母大写，区分html元素名）
+
+```jsx
+function HelloMessage(props) {   //函数定义组件，通过props接受参数
+    return <h1>Hello {props.name}!</h1>;
+}
+ class Welcome extends React.Component {  //使用类定义组件
+  render() {
+    return <h1>Hello World!</h1>;
+  }
+}
+```
+
+
 
 #### 2. JSX
 
