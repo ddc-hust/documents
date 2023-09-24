@@ -55,9 +55,17 @@
 
 * **px**：绝对单位，页面按精确像素展示
 
-* **em**：相对单位，基准点为父节点字体的大小，如果自身定义了`font-size`按自身来计算，整个页面内`1em`不是一个固定的值
+* **em**：相对单位，
+  * 相对于当前元素字体的大小。如果一个元素的字体大小是16px， 那么1em等于16px。
+
+  * 如果子元素使用em 的话，就是相对于它的父元素的值。
+
+  * 基准点为父节点字体的大小，如果自身定义了`font-size`按自身来计算，整个页面内`1em`不是一个固定的值
 
 * **rem**：相对单位，可理解为`root em`, 相对根节点`html`的字体大小来计算
+  * em的值可以继承，会继承父元素字体的大小，页面中不同位置1em表示的大小不一样
+
+  * 但是rem始终表示为根元素字体的大小
 
 * **vh、vw**：主要用于页面视口大小布局，在页面布局上更加方便简单
 
@@ -178,6 +186,10 @@
    * **注意：**height属性不能继承，可以使用height:100%使得子容器的高度和父容器的高度相等
 
 2. **三栏布局**：
+
+   * 1. 使用flex弹性布局,flex-grow。 
+     2. 左右使用绝对定位，脱离文档流。中间使用margin-left预留固定的位置
+     3. 左右使用float，中间margin-left为0px就可以
 
    1. 左右使用float，中间使用margin设置边距。左右两边固定宽度，中间宽度自适应（缺点：中间内容最后加载）。container使用BFC
 
@@ -348,3 +360,49 @@
   * `flex-start`规定子元素从左往右排列，左对齐
   * `flex-end`规定子元素右对齐
     * 注意，flex-start和flex-end不是规定元素的排列位置
+
+## 9. 0.5px的实现
+
+* 可以使用transform:scale(0.5)来进行缩放。伪元素content为空，设置边框。先将伪元素的高和宽设置为200%。设置为元素为块级元素，设置缩放，设置bottom为0。设置伪元素
+
+  * ```css
+    /* 方案1：伪元素+scale */
+    .box1 {
+        position: relative;
+    }
+    .box1::after {
+        position: absolute;
+        bottom: 0;
+        z-index: -1;
+        width: 200%;
+        height: 200%;
+        content: "";
+        display: block;
+        border: 1px solid red;
+        border-radius: 5px;
+        transform: scale(0.5);
+        transform-origin: left bottom;
+    }
+    
+    ```
+
+  * 使用背景渐变，主要使用linear-gradient
+
+    ```css
+    /* 方案2：背景渐变 */
+    .box2 {
+        position: relative;
+    }
+    .box2::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background-image: linear-gradient(0deg, red 50%, transparent 50%);
+    }
+    
+    ```
+
+  

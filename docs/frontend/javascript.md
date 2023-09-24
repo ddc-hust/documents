@@ -185,6 +185,7 @@
   * 函数作用域：如果一个变量是在函数内部声明的它就在一个函数作用域下面。这些变量只能在函数内部访问，不能在函数以外去访问
   * **块级作用域**：在大括号中使用`let`和`const`声明的变量存在于块级作用域中。在大括号之外不能访问这些变量
   * js遵循的**词法作用域**，也叫静态作用域，变量在创建时，其作用域就被确定好了
+  * 
 
 
 ```javascript
@@ -204,7 +205,140 @@ bar()		//输出2，因为foo的作用域是全局的，这里foo取不到bar中�
 * **作用域链**：从当前位置的作用域向外层作用域不断的搜查而产生的链表即为作用域链
 * **执行上下文**：见下面
 * **词法环境**：登记变量声明、函数声明的地方，这样取变量的时候，就知道去哪里取。词法环境是在代码定义的时候就确定了，不是在执行的过程中动态确定的。JS就采用的是这种词法作用域（静态作用域）（比如箭头函数this指向）
-* 
+
+### this
+
+* **执行上下文**：变量环境、词法环境，outer以及this
+
+ * ```js
+   var bar = {
+       myName:"time.geekbang.com",
+       printName: function () {
+           console.log(myName)
+       }    
+   }
+   function foo() {
+       let myName = "极客时间"
+       return bar.printName
+   }
+   let myName = "极客邦"
+   bar.printName()  // 输出极客棒， 取得是全局的
+   ```
+
+ * ```js
+   var bar = {
+       myName:"time.geekbang.com",
+       printName: function () {
+           console.log(this.myName) // 注意this
+       }    
+   }
+   function foo() {
+       let myName = "极客时间"
+       return bar.printName
+   }
+   let myName = "极客邦"
+   bar.printName()  // 输tim. greeban.com， 取得是bar对象的this.
+   ```
+
+ * ```js
+   var myObj = {
+     name : "极客时间",
+     showThis: function(){
+       this.name = "极客邦"
+       console.log(this)
+     }
+   }
+   var foo = myObj.showThis
+   foo()     // 输出window，为什么呢？因为foo函数是在全局环境中调用的，全局环境中的this指向window
+   ```
+
+* 在全局环境中调用一个函数，函数内部的 this 指向的是全局变量 window。
+
+* 通过一个对象来调用其内部的一个方法，该方法的执行上下文中的 this 指向对象本身
+
+* **this存在的问题**
+
+  * **嵌套函数中的 this 不会从外层函数中继承**
+
+  * ```js
+    var myObj = {
+      name : "极客时间", 
+      showThis: function(){
+        console.log(this)
+        function bar(){console.log(this)} // bar函数是嵌套函数，this指向了全局对象
+        bar()
+      }
+    }
+    myObj.showThis()
+    ```
+
+  * 解决办法如下：
+
+  * ```js
+    var myObj = {
+      name : "极客时间", 
+      showThis: function(){
+        console.log(this)
+        var that = this
+        function bar(){
+          that.name = "极客邦"  // 传入外层this的值
+        }
+        bar()
+      }
+    }
+    myObj.showThis()
+    console.log(myObj.name)
+    console.log(window.name)
+    
+    
+    // 或者使用箭头函数，
+    var myObj = {
+      name : "极客时间", 
+      showThis: function(){
+        console.log(this)
+        var bar = ()=>{
+          this.name = "极客邦"
+          console.log(this) // 箭头函数的this指向外城this, 因为箭头函数并不会创建其自身的执行上下文，所以箭头函数中的 this 取决于它的外部函数。
+        }
+        bar()
+      }
+    }
+    myObj.showThis()
+    console.log(myObj.name)
+    console.log(window.name)
+    ```
+
+  * **this 没有作用域的限制**，这点和变量不一样，所以嵌套函数不会从调用它的函数中继承 this，这样会造成很多不符合直觉的代码。要解决这个问题，你可以有两种思路：
+
+    * 第一种是把 this 保存为一个 self 变量，再利用变量的作用域机制传递给嵌套函数。
+    * 第二种是继续使用 this，但是要把嵌套函数改为箭头函数，因为箭头函数没有自己的执行上下文，所以它会继承调用函数中的 this。
+
+  * **普通函数中的 this 默认指向全局对象 window**
+
+  * 当函数作为对象的方法调用时，函数中的 this 就是该对象；
+
+  * 当函数被正常调用时，在严格模式下，this 值是 undefined，非严格模式下 this 指向的是全局对象 window；
+
+  * 嵌套函数中的 this 不会继承外层函数的 this 值。
+
+  * 因为箭头函数没有自己的执行上下文，所以箭头函数的 this 就是它外层函数的 this
+
+### 作用域链
+
+* 每个执行上下文的变量环境中，都包含了**一个外部引用，用来指向外部的执行上下文，我们把这个外部引用称为 outer。**
+  * 当一段代码使用了一个变量时，JavaScript 引擎首先会在“当前的执行上下文”中查找该变量，
+  * 如果找不到，会通过outer指针取找
+* **作用域链是通过词法作用域来确定的，而词法作用域反映了代码的结构。**
+
+### 词法作用域
+
+* 词法作用域就是指作用域是由**代码中函数声明的位置来决定的**，所以词法作用域是**静态的作用域**，通过它就能够预测代码在执行过程中如何查找标识符。
+* 词法作用域是代码编译阶段就决定好的，和函数是怎么调用的没有关系。
+* 根据词法作用域的规则，内部函数 getName 和 setName 总是可以访问它们的外部函数 foo 中的变量（**注意this不是变量哦，所以内部函数的this不可以访问外部函数的this.**）
+
+### 闭包
+
+* 在 JavaScript 中，根据词法作用域的规则，内部函数总是可以访问其外部函数中声明的变量，当通过调用一个外部函数返回一个内部函数后，即使该外部函数已经执行结束了，但是内部函数引用外部函数的变量依然保存在内存中，我们就把这些变量的集合称为闭包。比如外部函数是 foo，那么这些变量的集合就称为 foo 函数的闭包
 
 ## 5. async/await
 
@@ -1058,3 +1192,393 @@ console.log(person.constructor === Person); // true
   * defer的脚本会在html解析完成之后，dom树构建完成之后，执行脚本。`async`会在加载完成之后立即执行。
   * `defer`的脚本会按照它在文档中的顺序依次执行。`async`的脚本不是按顺序执行的
   * `defer`一般用于多个有依赖关系的脚本的加载和执行。`async`用于单个脚本的加载，或者多个脚本之间没有依赖关系
+
+## 30. DOM事件流
+
+* **DOM事件流**：dom事件流分为三个阶段，分别是事件捕获、目标阶段、事件冒泡。
+* **事件捕获：**就是当点击某个具体的标签的时候，需要找到这个具体标签的事件源，这就是捕获阶段。然后会触发目标阶段，最后上升到冒泡阶段，开始事件调用。
+* **事件冒泡：**某个子元素的某类型的事件被触发时，它的父元素同类型的事件也会被触发，一直到触发到根元素，层层网上传递，就是事件冒泡。
+  * **注意：**不是 所有的事件都支持事件冒泡的， focus、blur 之类的事件
+  * **阻止事件冒泡：**event.stopPropagation()
+* **事件委托：**事件委托就是给父元素注册事件，委托给子元素来处理。借助事件冒泡来实现的。
+  * **原因：**每一个事件处理程序都是一个对象，对象过多占用内存，会影响性能。而且事件处理程序需要和dom节点进行交互，访问dom的次数越多，也会印象页面的性能（尽量减少dom的操作），所以通过事件委托，可以实现只再父级节点上绑定事件处理程序，进行dom操作。从而减少了与dom的交互次数。
+  * **优点：**减少了事件注册，节省内存。支持动态添加子节点。
+  * mousemove、mouseout 这样的事件，虽然有事件冒泡，但是只能不断通过位置去计算定位，对性能消耗高，不适合事件委托
+
+* * 
+
+  
+
+## 31. 数组的非数字键属性
+
+* 在 JavaScript 中，数组的长度（length）属性表示数组的元素个数，而不包括非数字键的属性
+
+* ```js
+  let arr = [];
+  arr['a'] = 1;
+  console.log(arr.length);
+  // 输出0，因为在 JavaScript 中，数组的长度（length）属性表示数组的元素个数，而不包括非数字键的属性。
+  ```
+
+* 如果想要遍历非数字属性，可以使用for...in...或者Object.keys()
+
+  ```js
+  let arr = [];
+  arr['a'] = 1;
+  arr['b'] = 2;
+  
+  for (let key in arr) {
+    console.log(key, arr[key]);
+  }
+  
+  let arr = [];
+  arr['a'] = 1;
+  arr['b'] = 2;
+  
+  Object.keys(arr).forEach(key => {
+    console.log(key, arr[key]);
+  });
+  ```
+
+
+## 32. 类的继承和函数的继承
+
+* 类的继承使用类和原型链，通过 `extends` 关键字实现，子类是父类的实例，可以使用 `instanceof` 运算符进行类型检查。
+
+* 函数的继承是通过在一个函数中调用另一个函数，通过设置上下文来实现属性和行为的继承，无法使用 `instanceof` 运算符进行类型检查。
+
+* ````js
+  // 
+  class Animal {
+    constructor(name) {
+      this.name = name;
+    }
+  
+    speak() {
+      console.log(`I'm ${this.name}`);
+    }
+  }
+  
+  class Dog extends Animal {
+    constructor(name, breed) {
+      super(name);
+      this.breed = breed;
+    }
+  
+    bark() {
+      console.log('Woof!');
+    }
+  }
+  
+  const dog = new Dog('Buddy', 'Labrador');
+  dog.speak(); // Output: I'm Buddy
+  dog.bark();  // Output: Woof!
+  console.log(dog instanceof Animal); // Output: true
+  ```
+  ````
+
+* 
+
+* ````js
+  // 函数的继承
+  function Animal(name) {
+    this.name = name;
+  }
+  
+  Animal.prototype.speak = function() {
+    console.log(`I'm ${this.name}`);
+  };
+  
+  function Dog(name, breed) {
+    Animal.call(this, name);
+    this.breed = breed;
+  }
+  
+  Dog.prototype = Object.create(Animal.prototype);
+  Dog.prototype.constructor = Dog;
+  
+  Dog.prototype.bark = function() {
+    console.log('Woof!');
+  };
+  
+  const dog = new Dog('Buddy', 'Labrador');
+  dog.speak(); // Output: I'm Buddy
+  dog.bark();  // Output: Woof!
+  console.log(dog instanceof Animal); // Output: false
+  ```
+  ````
+
+* * *
+  * 
+## 33. 数组的操作
+
+* forEach: 中途不会跳出循环，无法改变原数组
+* map：生成新的数组
+* filter：生成新的数组
+* some/every： 都返回的是布尔值
+
+## 34. Number的范围
+
+### 1. IEEE 754标准
+
+* 定义了二进制浮点数的表示方法、算术运算规则以及与浮点数相关的异常处理方式。
+  * 单精度（Single Precision）：使用32位二进制位来表示一个浮点数，其中包括1位的符号位、8位的指数部分和23位的尾数部分。
+  * 双精度（Double Precision）：使用64位二进制位来表示一个浮点数，其中包括1位的符号位、11位的指数部分和52位的尾数部分。
+
+### 2. JS数的范围
+
+* JavaScript遵循IEEE 754标准，使用64位双精度浮点数表示数字，通常称为“双精度”或“64位浮点数”。
+
+## 34. 0.1 + 0.2 ！== 0.3
+
+* 这和二进制浮点数的表示有关
+* 0.1 和 0.2 在十进制中是精确的小数，但它们在**二进制浮点表示法中是无限循环小数，因此无法被精确地表示**。当您执行0.1 + 0.2时，JavaScript引擎进行了浮点数的二进制运算，导致一个微小的舍入误差，因此结果不等于 0.3。
+* **十进制小数转换为二进制**： 通过不断乘以2并取整数部分的方式来实现。
+* 可以通过指定一个误差，判断在误差范围内，是否相等
+
+## 35. setTImeout延迟时间不准确的问题
+
+`setTimeout` 是浏览器提供的一个定时器函数，它用于在一定时间间隔后执行指定的回调函数。尽管在 JavaScript 中存在事件循环机制（Event Loop）和宏任务（Macrotask）的概念，`setTimeout` 是如何实现在延迟时间后执行回调函数的呢？
+
+下面是 `setTimeout` 的工作原理：
+
+1. 当调用 `setTimeout` 时，浏览器会将指定的回调函数（即第一个参数）和延迟时间（即第二个参数，单位是毫秒）添加到一个称为**定时器队列**（Timer Queue）的数据结构中。
+2. JavaScript 引擎会继续执行当前任务，直到当前任务完成。在这期间，浏览器会等待计时器的延迟时间。
+3. 一旦延迟时间到达，浏览器将会把该定时器标记为**到期**（timeout）。这时，事件循环（Event Loop）会检查是否存在到期的定时器。
+4. 如果有到期的定时器，浏览器会将相应的回调函数添加到**任务队列**（Task Queue）中，这个队列也被称为**宏任务队列**。
+5. 一旦任务队列中有可执行的宏任务，事件循环会将它们一个一个地执行。
+6. 当事件循环执行到某个宏任务时，它会执行该宏任务所包含的回调函数，这就是 `setTimeout` 的回调函数被执行的时刻。
+
+需要注意的是，虽然 `setTimeout` 的延迟时间是相对准确的，但由于 JavaScript 是单线程执行的，因此在特定情况下，可能会受到其他任务的影响，导致回调函数的执行时间略有不同。此外，如果在 `setTimeout` 的回调函数中有耗时的操作，也会影响回调函数的准确执行时间。
+
+
+
+## 36. new操作符做的事情
+
+* 首先创建了一个空对象 tempObj；
+* 接着调用 CreateObj.call 方法，并将 tempObj 作为 call 方法的参数，这样当 CreateObj 的执行上下文创建时，它的 this 就指向了 tempObj 对象；
+* 然后执行 CreateObj 函数，此时的 CreateObj 函数执行上下文中的 this 指向了 tempObj 对象；
+* 最后返回 tempObj 对象。
+
+# ES6
+
+## 1. Class类
+
+* 为什么会出现类？因为在js中，生成实例对象的传统发方法是 通过构造函数。这种写法不够明确， 所以出现类，class可以看作只是一个语法糖
+
+* es6的类只是ES5的构造函数的一层封装
+
+  ```js
+  //生成实例对象的传统方法，借助函数
+  function Point(x, y) {  //函数
+      this.x = x;			
+      this.y = y;
+  }
+  
+  Point.prototype.toString = function() {
+      return '(' + this.x + ", " + this.y + ")";
+  }
+  
+  var p = new Point(1, 2);
+  
+  ```
+
+* 类的数据类型就是函数，类本身就指向构造函数
+
+  ```js
+  class Point {
+      constructor(x, y) {
+          this.x = x;
+          this.y = y;
+      }
+      
+      toString() {
+          return '(' + this.x + ", " + this.y + ")";
+      }
+  }
+  typeof Point //Function
+  Point === Point.prototype.constructor
+  ```
+
+* 类的所有方法都定义在类的`prototye`属性上面
+
+### 1. 类的实例
+
+* 类的属性和方法，除了显式定义在其本身（定义在this对象上），否则都是定义在原型上（定义在class上）
+
+  ```js
+  class Point {
+    constructor(x, y) {
+      this.x = x;	//这个属性是定义在其本身上
+      this.y = y;
+    }
+  
+    toString() { //这个方法是定义在原型prototype上
+      return '(' + this.x + ', ' + this.y + ')';
+    }
+  }
+  
+  var point = new Point(2, 3);
+  
+  point.toString() // (2, 3)
+  
+  point.hasOwnProperty('x') // true
+  point.hasOwnProperty('y') // true
+  point.hasOwnProperty('toString') // false
+  point.__proto__.hasOwnProperty('toString') // true
+  ```
+
+* 类的所有实例共享一个原型对象
+
+  ```js
+  var p1 = new Point(2,3);
+  var p2 = new Point(3,2);
+  
+  p1.__proto__ === p2.__proto__ //true
+  //注意这里的实例的__proto__属性不是语言的特性，是私有属性
+  //可以使用Object.getPrototypeOf()方法获取实例对象的原型
+  ```
+
+### 2. 取值函数getter和存值函数setter
+
+* 在类的内部可以使用get和set关键字，拦截属性的存取行为
+
+  ```js
+  class MyClass {
+    constructor() {
+      // ...
+    }
+    get prop() {
+      return 'getter';
+    }
+    set prop(value) {
+      console.log('setter: '+value);
+    }
+  }
+  
+  let inst = new MyClass();
+  
+  inst.prop = 123;
+  // setter: 123
+  
+  inst.prop
+  // 'getter'
+  ```
+
+  ### 3. 静态方法
+
+  * 在方法前加上static关键字，则该方法不会被实例继承，直接通过类来调用
+
+## 2. Class的继承
+
+### 1. super()
+
+* super()表示父类的构造函数，用来新建一个父类的实例对象。调用super()的作用是可以形成子类的this对象，把父类的实例属性和方法放到这个this对象上面
+
+* supe()函数只可以用在子类的构造函数之中
+
+* ES6的类的继承机制和ES5的继承有一些不一样。
+
+  * ES6的继承中，子类的构造函数一定要调用super()， 这是因为在ES6中继承在前，实例在后。先将父类的属性和方法加到一个空的对象上，在将该对象作为子类的实例。调用super函数，就相当于执行了父类的构造函数，就有了父类的实例对象
+  * ES5的继承中，是实例在前，继承在后。先创建一个子类的实例对象，再把父类的方法添加到这个对象上
+
+  ```js
+  class Point { /* ... */ }
+  
+  class ColorPoint extends Point {
+    constructor(x, y, color) {
+      super(x, y); // 调用父类的constructor(x, y)
+      this.color = color;
+    }
+  
+    toString() {
+      return this.color + ' ' + super.toString(); // 调用父类的toString()
+    }
+  }
+  ```
+
+### 2. Object.getPrototypeOf()
+
+* 获取原型，可以从子类上获取父类。也可用于判断一个类是否继承了另一个类
+
+  ```js
+  class Point {};
+  class ColorPoint extends Point {};
+  Object.getPrototypeOf(ColorPoint) === Point  //true
+  ```
+
+### 3. super对象
+
+* super可以作为函数调用，调用父类的构造函数
+* super还可以作为对象，在普通方法中，super指向父类的原型对象。在静态方法中，super指向父类。
+
+## 3. 模块化规范
+
+* 模块化就是将系统分成独立的功能模块，使得需要什么功能就加载什么功能
+* **优点：**
+  * 可以避免命名冲突
+  * 分离功能，可以实现按需加载
+  * 更好的实现了代码的复用
+
+1. **CommonJS**
+
+   * 模块的加载是输出一个对象，一旦输出这个对象后，模块内部的变化就不会影响到这个值
+   * **同步性：**模块加载是一项阻塞操作，是同步加载的额，加载的顺序就是代码中出现的顺序
+   * **缓存：**模块可以多次加载，但是只会在第一次加载时运行一次，然后运行结果就被缓存了，以后再加载，就直接读取缓存结果。要想让模块再次运行，必须清除缓存。
+   * **作用域：**所有代码都运行在模块作用域，不会污染全局作用域。
+   * **服务端**
+   * **运行时加载**`，因为ComminJS加载是先`加载整个模块，生成一个对象`（这个对象包含了path这个模块的所有API），然后再从这个对象上面读取方法-
+
+2. **AMD**(Asynchronous Module Definition, **异步模块**机制)
+
+   * **应用于浏览器端**，由于浏览器端js是网络动态加载的，所以需要实现异步加载，就出现了AMD, AMD是规范，对应的就是Require.js
+   * 模块在定义的时候就必须先知名它所需要依赖的模块，然后把本模块的代码写在回调函数中执行
+   * 使用`define`用来暴露模块，使用`require`用来引入模块；
+   * **加载时机：**异步加载
+   * **依赖执行：**AMD 模块的依赖关系在模块定义时就被明确指定，并且模块加载器在页面加载时会预先获取这些依赖关系。
+
+3. **CMD****(Common Module Definition)**
+
+   1. 比如seaJS
+   2. **加载时机：**延迟加载，模块只有在真正需要使用它时才会被加载和执行。这种加载方式在模块的引入和执行之间存在一种更明显的关联性
+   3. **依赖执行：** CMD 模块的依赖关系是在模块内部通过 `require` 函数声明的，这些依赖关系在模块执行时动态解析。
+
+4. **UMD(AMD+Common.js)**
+
+   1.  CommonJS 适用于服务端，AMD、CMD 适用于web端，那么需要同时运行在这两端的模块就可以采用 UMD 的方法，使用该模块化方案，可以很好地兼容AMD、CommonJS语法。UMD 先判断是否支持Node.js的模块（exports）是否存在，存在则使用 node.js 模块模式。再判断是否支持 AMD（define是否存在），存在则使用AMD方式加载模块。由于这种通用模块解决方案的适用性强，很多JS框架和类库都会打包成这种形式的代码。
+
+5. **ES6 Module**同步加载
+
+   1. **仅支持静态的导入导出：**在编译时期就完成模块的导入
+      * **原因**：提高性能，在编译阶段即完成所有模块导入，如果在运行时进行会降低速度。更好的检查错误，比如对变量类型进行检查
+      * **模块的依赖关系在模块的静态分析阶段就已经确定，**模块的加载发生在模块执行之前。
+      * 当一个模块导入（import）其他模块时，这些导入语句会在代码解析阶段被处理，而不是在运行时。这使得 JavaScript 引擎可以在执行代码之前知道模块之间的依赖关系，以及如何加载这些依赖关系。
+      * **好处：**
+        * **可预测性：** 同步加载使得模块加载顺序更加可控和可预测，有助于避免一些潜在的问题，如循环依赖。
+        * **可静态化：** 静态导入可以被静态化，这意味着工具可以在构建时（例如使用 Webpack、Rollup 等）进行模块的静态分析和优化，以生成更小、更高效的包
+      * **ES6 模块输出的是值的引用，输出接口动态绑定**，动态关联模块中的值。**而 CommonJS 输出的是值的拷贝**
+      * **缓存：**模块可以多次加载，但是只会在第一次加载时运行一次，然后运行结果就被缓存了，以后再加载，就直接读取缓存结果。要想让模块再次运行，必须清除缓存。
+   2. **仅在顶层定义：**因为 ES Module 需要在编译时期进行模块静态优化，import 和 export 命令会被 JavaScript 引擎静态分析，先于模块内的其他语句执行，这种设计有利于编译器提高效率，但也导致无法在运行时加载模块（动态加载）。可以使用import()动态加载
+      * import()函数可以用在任何地方，不仅仅是模块，非模块的脚本也可以使用。 它是运行时执行，也就是说，什么时候运行到这句话，就会加载到指定的模块。另外，import()函数所加载的模块没有静态链接关系，这点也是与import语法不同
+   3. **编译时加载**`，`ES6模块不是对象`，它的对外接口只是一种静态定义，在代码静态定义阶段就会生成-----编译时加载
+
+6. ### AMD与CMD区别
+
+   1. 模块定义时对依赖的处理不同
+
+      AMD推崇前置依赖，在定义模块时就要声明其依赖的模块；而CMD推从就近依赖，只有在用到某个模块时再使用require导入；
+
+   2. 对依赖模块的处理机制不同
+
+      首先AMD和CMD对模块的加载方式都是异步的 不过区别在于AMD当加载了依赖模块之后立即执行依赖模块，依赖模块的执行顺序和我们书写的顺序不一定一致; 而CMD加载完依赖模块之后，并不会立即执行，等所有的依赖模块都加载好之后，进入回到函数逻辑，遇到require语句的时候，才执行对应的模块，这样模块的执行顺序就和我们书写的时候一致了
+
+   3. CommonJs主要用在服务器端，AMD和CMD用在浏览器环境 AMD 是 RequireJS 在推广过程中对模块定义的规范化产出。 CMD 是 SeaJS 在推广过程中对模块定义的规范化产出。 ES6 规范只支持静态的导入和导出，与CommonJS 的`运行时加载`不同的是ES6是`编译时加载`，ES Module 是在编译时期进行模块静态优化。
+
+   
+
+## 4. 编译VS执行
+
+* JS是一门解释性语言，在运行时，是逐行解释和执行的，也就是说不是先编译后执行的
+* **即时编译：**为了优化性能，JavaScript 引擎通常会使用即时编译（Just-In-Time Compilation，JIT Compilation）技术，将某些代码编译成机器码以提高执行速度。如 V8，用于 Node.js 和 Chrome 浏览器）在运行时会执行即时编译，将某些代码编译成机器码，以提高性能。因此，JavaScript 可以被认为是一种“解释型语言和即时编译语言的混合体”。
+  * **即时编译：**通过将**热点代码**编译成机器码来提高 JavaScript 代码的执行性能，
+  * 在运行时，JavaScript 引擎会分析代码的执行情况，并识别出被频繁执行的代码块，通常称为热点代码（Hot Code）。然后，它将这些热点代码编译成本地机器码，以便更高效地执行。这个机器码可以直接在计算机的 CPU 上运行，因此速度更快。
